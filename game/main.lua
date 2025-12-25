@@ -1,8 +1,12 @@
+InputDeviceManager = require "lib.cuddle.input.inputdevicemanager"
+PlayerManager = require "lib.cuddle.players.playermanager"
+
 function love.load()
+	PlayerManager:init()
 end
 
 function love.update()
-	print("Hello!")
+	
 end
 
 function love.draw()
