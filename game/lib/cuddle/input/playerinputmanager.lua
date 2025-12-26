@@ -37,8 +37,8 @@ function PlayerInputManager:pushInputContext(inputContext)
 	print("Pushing Input Context ", inputContext)
 	table.insert(inputContextStack, inputContext)
 
-	for inputAction, actionDefinition in pairs(inputContext) do
-		
+	for _, actionDefinition in pairs(inputContext) do
+		actionDefinition:activateForPlayer(self)
 	end
 end
 
