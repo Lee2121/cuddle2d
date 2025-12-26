@@ -14,7 +14,7 @@ end
 function PlayerInstance:new(inputDevice, connectionType)
 	self.inputDevice = inputDevice
 	self.connectionType = connectionType
-	self.playerInputManager = PlayerInputManager(inputDevice)
+	self.inputManager = PlayerInputManager(inputDevice)
 end
 
 return PlayerInstance

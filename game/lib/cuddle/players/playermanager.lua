@@ -3,7 +3,10 @@ require "lib.cuddle.input.inputdevicemanager"
 require "lib.cuddle.players.playerinstance"
 
 PlayerManager = {
-	connectedPlayers = {}
+	connectedPlayers = {},
+
+	onPlayerConnectedCallbacks = {},
+	onPlayerDisconnectedCallbacks = {},
 }
 
 function PlayerManager:init()
@@ -49,7 +52,7 @@ function PlayerManager:connectLocalPlayer(inputDevice)
 
 	print("Connecting local player with device ", inputDevice)
 	table.insert(self.connectedPlayers, newPlayerInstance)
-	print(self.connectedPlayers)
+	BroadcastCallback(self.onPlayerConnectedCallbacks, newPlayerInstance)
 end
 
 function PlayerManager:disconnectLocalPlayer(player)
@@ -57,6 +60,7 @@ function PlayerManager:disconnectLocalPlayer(player)
 		if connectedPlayer == player then
 			print("Disconnecting player ", player)
 			table.remove(self.connectedPlayers, i)
+			BroadcastCallback(self.onPlayerDisconnectedCallbacks, connectedPlayer)
 			break
 		end
 	end
