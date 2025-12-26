@@ -1,107 +1,36 @@
 InputDeviceManager = require "lib.cuddle.input.inputdevicemanager"
 require "lib.cuddle.utils.callbacks"
+require "lib.cuddle.input.inputactions"
 
 PlayerInputManager = {
 	actionTriggeredCallbacks = {},
 	actionStoppedCallbacks = {}
 }
 
-local PS4_BTN_ID_X = 1
-local PS4_BTN_ID_CIRCLE = 2
-local PS4_BTN_ID_SQUARE = 3
-local PS4_BTN_ID_Triangle = 4
-
-local JOYSTICK_DEADZONE = .1
-
-local InputAction = {}
-function InputAction:new(valueType, inputs)
-	self.valueType = valueType
-	self.inputs = inputs
-
-	for i, input in ipairs(inputs) do
-		BindToCallback(input.inputStarted, self, self.linkedInputStarted)
-		BindToCallback(input.inputEnded, self, self.linkedInputEnded)
-	end
-end
-
-function InputAction:linkedInputStarted(input)
-
-end
-
-function InputAction:linkedInputEnded(input)
-
-end
-
-local Input_KeyboardKey = {
-	keyboardPressedCallbacks = InputDeviceManager.onKeyPressedCallbacks,
-	keyboardReleasedCallbacks = InputDeviceManager.onKeyReleasedCallbacks
-}
-
-function Input_KeyboardKey:new(key)
-	BindToCallback(self.keyboardPressedCallbacks, self, self.onKeyPressed)
-	BindToCallback(self.keyboardReleasedCallbacks, self, self.onKeyReleased)
-end
-
-function Input_KeyboardKey:onKeyPressed()
-	BroadcastCallback(self.inputStarted, self)
-end
-
-function Input_KeyboardKey:onKeyReleased()
-	BroadcastCallback(self.inputEnded, self)
-end
-
-local Input_GamepadAxis = {}
-function Input_GamepadAxis:new(axisName)
-
-end
-
-local Input_GamepadButton = {}
-function Input_GamepadButton:new(buttonID)
-
-end
-
-local Input_MouseClicked = {}
-function Input_MouseClicked:new(buttonID)
-
-end
-
-local Input_MousePosition = {}
-function Input_MousePosition:new()
-
-end
-
-local Input_TouchDrag = {}
-function Input_TouchDrag:new()
-
-end
-
-local Input_TouchJoystick = {}
-function Input_TouchJoystick:new()
-
-end
-
--- these should eventually be moved out to a game specific section of the code. maybe the player controller?
-InputContext_Rally  = {
-	move = InputAction:new("vector2d", { 	xaxis = { Input_KeyboardKey:new('a'), Input_KeyboardKey:new("left"), Input_GamepadAxis:new("leftx") },
-										yaxis = { Input_KeyboardKey:new('d'), Input_KeyboardKey:new("right"), Input_GamepadAxis:new("lefty") },
-										xyaxis = { Input_TouchJoystick:new() } } ),
-
-	spaceBar = InputAction:new("bool", { Input_KeyboardKey:new("spacebar"), Input_GamepadButton:new(PS4_BTN_ID_Triangle) } ),
-}
+setmetatable(PlayerInputManager, PlayerInputManager)
+PlayerInputManager.__index = PlayerInputManager
 
 local registeredInputDevices = {
-	keyboard = {},
-	mouse = {},
+	mouseAndKeyboard = {},
 	touch = {},
 	gamepad = {}
 }
 
 local inputContextStack = {}
 
+function PlayerInputManager:__call(inputDevice)
+	local newInstance = setmetatable({}, self)
+	newInstance:new(inputDevice)
+	return newInstance
+end
+
 function PlayerInputManager:new(inputDevice)
-	if inputDevice ~= nil then
-		self:registerInputDevice(inputDevice)
+
+	if inputDevice == nil then
+		error("invalid input device!")
 	end
+	
+	self:registerInputDevice(inputDevice)
 end
 
 function PushInputContext(inputContext)
@@ -128,42 +57,34 @@ local function isInputDeviceAGamepad(inputDevice)
 end
 
 function PlayerInputManager:registerInputDevice(inputDevice)
-	if inputDevice == "keyboard" then
-		InputDeviceManager:bindToKeyboardCallbacks(self, self.keyPressed, self.keyReleased)
-		registeredInputDevices.keyboard = inputDevice
-	elseif inputDevice == "mouse" then
-		InputDeviceManager:bindToMouseCallbacks(self, self.mousePressed, self.mouseReleased, self.mouseMoved)
-		registeredInputDevices.mouse = inputDevice
+	if inputDevice == "mouseAndKeyboard" then
+		-- InputDeviceManager:bindToKeyboardCallbacks(self, self.keyPressed, self.keyReleased)
+		registeredInputDevices.mouseAndKeyboard = inputDevice
 	elseif inputDevice == "touch" then
-		InputDeviceManager:bindToTouchCallbacks(self, self.touchPressed, self.touchReleased, self.touchMoved)
+		-- InputDeviceManager:bindToTouchCallbacks(self, self.touchPressed, self.touchReleased, self.touchMoved)
 		registeredInputDevices.touch = inputDevice
 	elseif isInputDeviceAGamepad(inputDevice) then
-		InputDeviceManager:bindToGamepadCallbacks(self, self.gamepadPressed, self.gamepadReleased, self.gamepadAxis)
+		-- InputDeviceManager:bindToGamepadCallbacks(self, self.gamepadPressed, self.gamepadReleased, self.gamepadAxis)
 		registeredInputDevices.gamepad = inputDevice
 	end
 end
 
 function PlayerInputManager:unregisterInputDevice(inputDevice)
-	if inputDevice == "keyboard" then
-		InputDeviceManager:unregisterFromKeyboardCallbacks(self)
-		registeredInputDevices.keyboard = nil
-	elseif inputDevice == "mouse" then
-		InputDeviceManager:unregisterFromMouseCallbacks(self)
-		registeredInputDevices.mouse = nil
+	if inputDevice == "mouseAndKeyboard" then
+		-- InputDeviceManager:unregisterFromMouseAndKeyboardCallbacks(self)
+		registeredInputDevices.mouseKeyboard = nil
 	elseif inputDevice == "touch" then
-		InputDeviceManager:unregisterFromKeyboardCallbacks(self)
+		-- InputDeviceManager:unregisterFromTouchCallbacks(self)
 		registeredInputDevices.touch = nil
 	else
-		InputDeviceManager:unregisterFromKeyboardCallbacks(self)
+		-- InputDeviceManager:unregisterFromGamepadCallbacks(self)
 		registeredInputDevices.gamepad = nil
 	end
 end
 
 local function GetInputNameFromDevice(inputDevice)
-	if inputDevice == "keyboard" then
-		return "keyboard"
-	elseif inputDevice == "mouse" then
-		return "mouse"
+	if inputDevice == "mouseAndKeyboard" then
+		return "mouseAndKeyboard"
 	elseif inputDevice == "touch" then
 		return "touch"
 	elseif isInputDeviceAGamepad(inputDevice) then
@@ -225,8 +146,8 @@ function PlayerInputManager:getInputActionValue(action)
 		return nil
 	end
 
-	local function getKeyboardActionValue(actionInputs)
-		return love.keyboard.isDown(actionInputs)
+	local function getMouseAndKeyboardActionValue(actionInputs)
+		return love.mouse.isDown(actionInputs)
 	end
 
 	local function getTouchActionValue(actionInputs)
@@ -271,10 +192,8 @@ function PlayerInputManager:getInputActionValue(action)
 
 			for j, inputType in ipairs(actionInputs) do
 				
-				if inputType == "mouse" then
-					result = getMouseActionValue(actionInputs)
-				elseif inputType == "keyboard" then
-					result = getKeyboardActionValue(actionInputs)
+				if inputType == "mouseAndKeyboard" then
+					result = getMouseAndKeyboardActionValue(actionInputs)
 				elseif inputType == "touch" then
 					result = getTouchActionValue(actionInputs)
 				elseif inputType == "gamepad" then

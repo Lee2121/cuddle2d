@@ -21,51 +21,51 @@ InputDeviceManager = {
 	-- End Input Device Callbacks
 }
 
-function InputDeviceManager:bindToKeyboardCallbacks(requestingObject, onKeyPressed, onKeyReleased)
-	BindToCallback(self.onKeyPressedCallbacks, requestingObject, onKeyPressed)
-	BindToCallback(self.onKeyReleasedCallbacks, requestingObject, onKeyReleased)
-end
+-- function InputDeviceManager:bindToMouseAndKeyboardCallbacks(requestingObject, onKeyPressed, onKeyReleased)
+-- 	BindToCallback(self.onKeyPressedCallbacks, requestingObject, onKeyPressed)
+-- 	BindToCallback(self.onKeyReleasedCallbacks, requestingObject, onKeyReleased)
+-- end
 
-function InputDeviceManager:unregisterFromKeyboardCallbacks(requestingObject)
-	UnregisterAllCallbacks(self.onKeyPressedCallbacks, requestingObject)
-	UnregisterAllCallbacks(self.onKeyReleasedCallbacks, requestingObject)
-end
+-- function InputDeviceManager:unregisterFromMouseAndKeyboardCallbacks(requestingObject)
+-- 	UnregisterAllCallbacks(self.onKeyPressedCallbacks, requestingObject)
+-- 	UnregisterAllCallbacks(self.onKeyReleasedCallbacks, requestingObject)
+-- end
 
-function InputDeviceManager:bindToMouseCallbacks(requestingObject, onMousePressed, onMouseReleased, onMouseMoved)
-	BindToCallback(self.onMousePressedCallbacks, requestingObject, onMousePressed)
-	BindToCallback(self.onMouseReleasedCallbacks, requestingObject, onMouseReleased)
-	BindToCallback(self.onMouseMovedCallbacks, requestingObject, onMouseMoved)
-end
+-- function InputDeviceManager:bindToMouseCallbacks(requestingObject, onMousePressed, onMouseReleased, onMouseMoved)
+-- 	BindToCallback(self.onMousePressedCallbacks, requestingObject, onMousePressed)
+-- 	BindToCallback(self.onMouseReleasedCallbacks, requestingObject, onMouseReleased)
+-- 	BindToCallback(self.onMouseMovedCallbacks, requestingObject, onMouseMoved)
+-- end
 
-function InputDeviceManager:unregisterFromMouseCallbacks(requestingObject)
-	UnregisterAllCallbacks(self.onMousePressedCallbacks, requestingObject)
-	UnregisterAllCallbacks(self.onMouseReleasedCallbacks, requestingObject)
-	UnregisterAllCallbacks(self.onMouseMovedCallbacks, requestingObject)
-end
+-- function InputDeviceManager:unregisterFromMouseCallbacks(requestingObject)
+-- 	UnregisterAllCallbacks(self.onMousePressedCallbacks, requestingObject)
+-- 	UnregisterAllCallbacks(self.onMouseReleasedCallbacks, requestingObject)
+-- 	UnregisterAllCallbacks(self.onMouseMovedCallbacks, requestingObject)
+-- end
 
-function InputDeviceManager:bindToGamepadCallbacks(requestingObject, onGamepadPressed, onGamepadReleased, onGamepadAxis)
-	BindToCallback(self.onGamepadPressedCallbacks, requestingObject, onGamepadPressed)
-	BindToCallback(self.onGamepadReleasedCallbacks, requestingObject, onGamepadReleased)
-	BindToCallback(self.onGamepadAxisCallbacks, requestingObject, onGamepadAxis)
-end
+-- function InputDeviceManager:bindToGamepadCallbacks(requestingObject, onGamepadPressed, onGamepadReleased, onGamepadAxis)
+-- 	BindToCallback(self.onGamepadPressedCallbacks, requestingObject, onGamepadPressed)
+-- 	BindToCallback(self.onGamepadReleasedCallbacks, requestingObject, onGamepadReleased)
+-- 	BindToCallback(self.onGamepadAxisCallbacks, requestingObject, onGamepadAxis)
+-- end
 
-function InputDeviceManager:unregisterFromGamepadCallbacks(requestingObject)
-	UnregisterAllCallbacks(self.onGamepadPressedCallbacks, requestingObject)
-	UnregisterAllCallbacks(self.onGamepadReleasedCallbacks, requestingObject)
-	UnregisterAllCallbacks(self.onGamepadAxisCallbacks, requestingObject)
-end
+-- function InputDeviceManager:unregisterFromGamepadCallbacks(requestingObject)
+-- 	UnregisterAllCallbacks(self.onGamepadPressedCallbacks, requestingObject)
+-- 	UnregisterAllCallbacks(self.onGamepadReleasedCallbacks, requestingObject)
+-- 	UnregisterAllCallbacks(self.onGamepadAxisCallbacks, requestingObject)
+-- end
 
-function InputDeviceManager:bindToTouchCallbacks(requestingObject, onTouchPressed, onTouchReleased, onTouchMoved)
-	BindToCallback(self.onTouchPressedCallbacks, requestingObject, onTouchPressed)
-	BindToCallback(self.onTouchReleasedCallbacks, requestingObject, onTouchReleased)
-	BindToCallback(self.onTouchMovedCallbacks, requestingObject, onTouchMoved)
-end
+-- function InputDeviceManager:bindToTouchCallbacks(requestingObject, onTouchPressed, onTouchReleased, onTouchMoved)
+-- 	BindToCallback(self.onTouchPressedCallbacks, requestingObject, onTouchPressed)
+-- 	BindToCallback(self.onTouchReleasedCallbacks, requestingObject, onTouchReleased)
+-- 	BindToCallback(self.onTouchMovedCallbacks, requestingObject, onTouchMoved)
+-- end
 
-function InputDeviceManager:unregisterFromTouchCallbacks(requestingObject)
-	UnregisterAllCallbacks(self.onTouchPressedCallbacks, requestingObject)
-	UnregisterAllCallbacks(self.onTouchReleasedCallbacks, requestingObject)
-	UnregisterAllCallbacks(self.onTouchMovedCallbacks, requestingObject)
-end
+-- function InputDeviceManager:unregisterFromTouchCallbacks(requestingObject)
+-- 	UnregisterAllCallbacks(self.onTouchPressedCallbacks, requestingObject)
+-- 	UnregisterAllCallbacks(self.onTouchReleasedCallbacks, requestingObject)
+-- 	UnregisterAllCallbacks(self.onTouchMovedCallbacks, requestingObject)
+-- end
 
 function love.gamepadpressed(joystick, button)
 	if not InputDeviceManager:isInputDeviceConnected(joystick) then
@@ -89,19 +89,19 @@ function love.mousemoved(x, y, dx, dy, isTouch)
 end
 
 function love.mousepressed(x, y, button, isTouch, presses)
-	if not InputDeviceManager:isInputDeviceConnected("keyboard") then
-		InputDeviceManager:connectDevice("keyboard")
+	if not InputDeviceManager:isInputDeviceConnected("mouseAndKeyboard") then
+		InputDeviceManager:connectDevice("mouseAndKeyboard")
 	end
 	BroadcastCallback(InputDeviceManager.onMousePressedCallbacks, x, y, button, isTouch, presses)
 end
 
 function love.mousereleased(x, y, button, isTouch, presses)
-	BroadcastCallback(InputDeviceManager.onmouseReleasedCallbacks, x, y, button, isTouch, presses)
+	BroadcastCallback(InputDeviceManager.onMouseReleasedCallbacks, x, y, button, isTouch, presses)
 end
 
 function love.keypressed(key, scancode, isRepeat)
-	if not InputDeviceManager:isInputDeviceConnected("keyboard") then
-		InputDeviceManager:connectLocalPlayer("keyboard")
+	if not InputDeviceManager:isInputDeviceConnected("mouseAndKeyboard") then
+		InputDeviceManager:connectDevice("mouseAndKeyboard")
 	end
 	BroadcastCallback(InputDeviceManager.onKeyPressedCallbacks, key, scancode, isRepeat)
 end
@@ -127,11 +127,11 @@ end
 
 function InputDeviceManager:isInputDeviceConnected(inputDevice)
 	for i, connectedDevice in ipairs(self.connectedDevices) do
-		if connectedDevice.inputDevice == inputDevice then
-			return false
+		if connectedDevice == inputDevice then
+			return true
 		end
 	end
-	return true
+	return false
 end
 
 function InputDeviceManager:connectDevice(inputDevice)

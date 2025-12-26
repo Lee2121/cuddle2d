@@ -1,6 +1,6 @@
 require "lib.cuddle.utils.callbacks"
-local InputDeviceManager = require "lib.cuddle.input.inputdevicemanager"
-local PlayerInstance = require "lib.cuddle.players.playerinstance"
+require "lib.cuddle.input.inputdevicemanager"
+require "lib.cuddle.players.playerinstance"
 
 PlayerManager = {
 	connectedPlayers = {}
@@ -12,7 +12,7 @@ function PlayerManager:init()
 end
 
 function PlayerManager:onInputDeviceConnected(inputDevice)
-	if self:getPlayerUsingDevice() == nil then
+	if not self:isAnyPlayerUsingDevice() then
 		self:connectLocalPlayer(inputDevice)
 	end
 end
@@ -33,10 +33,14 @@ function PlayerManager:getPlayerUsingDevice(inputDevice)
 	return nil
 end
 
+function PlayerManager:isAnyPlayerUsingDevice(inputDevice)
+	return (PlayerManager:getPlayerUsingDevice(inputDevice) ~= nil)
+end
+
 function PlayerManager:connectLocalPlayer(inputDevice)
 
 	-- make sure this input device isn't already being used
-	if not self.isInputDeviceAvailable(inputDevice) then
+	if self:isAnyPlayerUsingDevice(inputDevice) then
 		error("Attempting to register a player with an input device that is already being used")
 		return
 	end
@@ -45,6 +49,7 @@ function PlayerManager:connectLocalPlayer(inputDevice)
 
 	print("Connecting local player with device ", inputDevice)
 	table.insert(self.connectedPlayers, newPlayerInstance)
+	print(self.connectedPlayers)
 end
 
 function PlayerManager:disconnectLocalPlayer(player)
