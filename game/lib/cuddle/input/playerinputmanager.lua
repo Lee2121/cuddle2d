@@ -52,10 +52,6 @@ function PlayerInputManager:popInputContext(inputContext)
 	end
 end
 
-local function isInputDeviceAGamepad(inputDevice)
-	return (love.joystick.getJoysticks()[inputDevice] ~= nil)
-end
-
 function PlayerInputManager:registerInputDevice(inputDevice)
 	if inputDevice == "mouseAndKeyboard" then
 		-- InputDeviceManager:bindToKeyboardCallbacks(self, self.keyPressed, self.keyReleased)
@@ -63,7 +59,7 @@ function PlayerInputManager:registerInputDevice(inputDevice)
 	elseif inputDevice == "touch" then
 		-- InputDeviceManager:bindToTouchCallbacks(self, self.touchPressed, self.touchReleased, self.touchMoved)
 		registeredInputDevices.touch = inputDevice
-	elseif isInputDeviceAGamepad(inputDevice) then
+	elseif InputDeviceManager.isInputDeviceAGamepad(inputDevice) then
 		-- InputDeviceManager:bindToGamepadCallbacks(self, self.gamepadPressed, self.gamepadReleased, self.gamepadAxis)
 		registeredInputDevices.gamepad = inputDevice
 	else
@@ -78,7 +74,7 @@ function PlayerInputManager:unregisterInputDevice(inputDevice)
 	elseif inputDevice == "touch" then
 		-- InputDeviceManager:unregisterFromTouchCallbacks(self)
 		registeredInputDevices.touch = nil
-	elseif isInputDeviceAGamepad(inputDevice) then
+	elseif InputDeviceManager.isInputDeviceAGamepad(inputDevice) then
 		-- InputDeviceManager:unregisterFromGamepadCallbacks(self)
 		registeredInputDevices.gamepad = nil
 	else
@@ -91,7 +87,7 @@ local function GetInputNameFromDevice(inputDevice)
 		return "mouseAndKeyboard"
 	elseif inputDevice == "touch" then
 		return "touch"
-	elseif isInputDeviceAGamepad(inputDevice) then
+	elseif InputDeviceManager.isInputDeviceAGamepad(inputDevice) then
 		return "gamepad"
 	end
 	error(string.format("Failed to find an input name for device %s"), inputDevice)

@@ -11,7 +11,7 @@ InputDeviceManager = {
 	onMouseReleasedCallbacks = {},
 	onMouseMovedCallbacks = {},
 
-	onGamepadPresseCallbacks = {},
+	onGamepadPressedCallbacks = {},
 	onGamepadReleasedCallbacks = {},
 	onGamepadAxisCallbacks = {},
 
@@ -128,6 +128,15 @@ end
 function InputDeviceManager:isInputDeviceConnected(inputDevice)
 	for i, connectedDevice in ipairs(self.connectedDevices) do
 		if connectedDevice == inputDevice then
+			return true
+		end
+	end
+	return false
+end
+
+function InputDeviceManager.isInputDeviceAGamepad(inputDevice)
+	for _, joystick in ipairs(love.joystick.getJoysticks()) do
+		if joystick == inputDevice then
 			return true
 		end
 	end
