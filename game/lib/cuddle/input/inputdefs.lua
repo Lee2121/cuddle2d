@@ -23,13 +23,14 @@ end
 local function GetModifiedInputValue(inputDef, rawValue)
 	local modifiedValue = rawValue
 	for _, modifier in pairs(inputDef.modifiers) do
-		modifiedValue = modifier.applyMod(modifiedValue)
+		modifiedValue = modifier:applyMod(modifiedValue)
 	end
 	return modifiedValue
 end
 
 local function BroadcastInputStarted(inputDef, rawValue)
 	local modifiedValue = GetModifiedInputValue(inputDef, rawValue)
+	print(modifiedValue)
 	BroadcastCallback(inputDef.inputStartedCallbacks, inputDef, modifiedValue)
 end
 
@@ -50,7 +51,6 @@ function InputDef_KeyboardKey:new(initData)
 	BindToCallback(InputDeviceManager.onKeyReleasedCallbacks, self, self.onKeyReleased)
 end
 
-
 function InputDef_KeyboardKey:onKeyPressed(key, scancode, isRepeat)
 	if key == self.assignedKey then
 		if not isRepeat then
@@ -69,11 +69,37 @@ end
 
 InputDef_GamepadAxis = InputDef_Base:createDef()
 function InputDef_GamepadAxis:new(axisName)
-	
+	self.axisName = axisName
+	BindToCallback(InputDeviceManager.onGamepadAxisCallbacks, self, self.onGamepadAxis)
+end
+
+function InputDef_GamepadAxis:onGamepadAxis(joystick, axis, value)
+	if axis == self.axisName then
+		BroadcastInputStarted(self, value)
+	end
 end
 
 InputDef_GamepadButton = InputDef_Base:createDef()
 function InputDef_GamepadButton:new(buttonID)
+	self.buttonID = buttonID
+	BindToCallback(InputDeviceManager.onGamepadPressedCallbacks, self, self.onGamepadButtonPressed)
+	BindToCallback(InputDeviceManager.onGamepadReleasedCallbacks, self, self.onGamepadButtonReleased)
+end
+
+function InputDef_GamepadButton:onGamepadButtonPressed(joystick, button)
+	if button == self.buttonID then
+		BroadcastInputStarted(self, 1)
+	end
+end
+
+function InputDef_GamepadButton:onGamepadButtonReleased(joystick, button)
+	if button == self.buttonID then
+		BroadcastInputEnded(self, 0)
+	end
+end
+
+InputDef_GamepadHat = InputDef_Base:createDef()
+function InputDef_GamepadHat:new(buttonID)
 end
 
 InputDef_MouseClicked = InputDef_Base:createDef()

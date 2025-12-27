@@ -14,58 +14,13 @@ InputDeviceManager = {
 	onGamepadPressedCallbacks = {},
 	onGamepadReleasedCallbacks = {},
 	onGamepadAxisCallbacks = {},
+	onGamepadHatCallbacks = {},
 
 	onTouchPressedCallbacks = {},
 	onTouchReleasedCallbacks = {},
 	onTouchMovedCallbacks = {},
 	-- End Input Device Callbacks
 }
-
--- function InputDeviceManager:bindToMouseAndKeyboardCallbacks(requestingObject, onKeyPressed, onKeyReleased)
--- 	BindToCallback(self.onKeyPressedCallbacks, requestingObject, onKeyPressed)
--- 	BindToCallback(self.onKeyReleasedCallbacks, requestingObject, onKeyReleased)
--- end
-
--- function InputDeviceManager:unregisterFromMouseAndKeyboardCallbacks(requestingObject)
--- 	UnregisterAllCallbacks(self.onKeyPressedCallbacks, requestingObject)
--- 	UnregisterAllCallbacks(self.onKeyReleasedCallbacks, requestingObject)
--- end
-
--- function InputDeviceManager:bindToMouseCallbacks(requestingObject, onMousePressed, onMouseReleased, onMouseMoved)
--- 	BindToCallback(self.onMousePressedCallbacks, requestingObject, onMousePressed)
--- 	BindToCallback(self.onMouseReleasedCallbacks, requestingObject, onMouseReleased)
--- 	BindToCallback(self.onMouseMovedCallbacks, requestingObject, onMouseMoved)
--- end
-
--- function InputDeviceManager:unregisterFromMouseCallbacks(requestingObject)
--- 	UnregisterAllCallbacks(self.onMousePressedCallbacks, requestingObject)
--- 	UnregisterAllCallbacks(self.onMouseReleasedCallbacks, requestingObject)
--- 	UnregisterAllCallbacks(self.onMouseMovedCallbacks, requestingObject)
--- end
-
--- function InputDeviceManager:bindToGamepadCallbacks(requestingObject, onGamepadPressed, onGamepadReleased, onGamepadAxis)
--- 	BindToCallback(self.onGamepadPressedCallbacks, requestingObject, onGamepadPressed)
--- 	BindToCallback(self.onGamepadReleasedCallbacks, requestingObject, onGamepadReleased)
--- 	BindToCallback(self.onGamepadAxisCallbacks, requestingObject, onGamepadAxis)
--- end
-
--- function InputDeviceManager:unregisterFromGamepadCallbacks(requestingObject)
--- 	UnregisterAllCallbacks(self.onGamepadPressedCallbacks, requestingObject)
--- 	UnregisterAllCallbacks(self.onGamepadReleasedCallbacks, requestingObject)
--- 	UnregisterAllCallbacks(self.onGamepadAxisCallbacks, requestingObject)
--- end
-
--- function InputDeviceManager:bindToTouchCallbacks(requestingObject, onTouchPressed, onTouchReleased, onTouchMoved)
--- 	BindToCallback(self.onTouchPressedCallbacks, requestingObject, onTouchPressed)
--- 	BindToCallback(self.onTouchReleasedCallbacks, requestingObject, onTouchReleased)
--- 	BindToCallback(self.onTouchMovedCallbacks, requestingObject, onTouchMoved)
--- end
-
--- function InputDeviceManager:unregisterFromTouchCallbacks(requestingObject)
--- 	UnregisterAllCallbacks(self.onTouchPressedCallbacks, requestingObject)
--- 	UnregisterAllCallbacks(self.onTouchReleasedCallbacks, requestingObject)
--- 	UnregisterAllCallbacks(self.onTouchMovedCallbacks, requestingObject)
--- end
 
 function love.gamepadpressed(joystick, button)
 	if not InputDeviceManager:isInputDeviceConnected(joystick) then
@@ -76,6 +31,14 @@ end
 
 function love.gamepadreleased(joystick, button)
 	BroadcastCallback(InputDeviceManager.onGamepadReleasedCallbacks, joystick, button)
+end
+
+function love.gamepadaxis(joystick, axis, value)
+	BroadcastCallback(InputDeviceManager.onGamepadAxisCallbacks, joystick, axis, value)
+end
+
+function love.joystickhat(joystick, hat, direction)
+	BroadcastCallback(InputDeviceManager.onGamepadHatCallbacks, joystick, hat, direction)
 end
 
 function love.joystickremoved(joystick)

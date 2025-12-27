@@ -10,16 +10,16 @@ local PS4_BTN_ID_Triangle = 4
 
 local JOYSTICK_DEADZONE = .1
 
-local InputContext_Test  = {
+local InputContext_Test = {
 	move = InputAction("vector2d", { xaxis = { InputDef_KeyboardKey('a'), InputDef_KeyboardKey("left"), InputDef_KeyboardKey('d', InputMod_Invert()), InputDef_KeyboardKey("right", InputMod_Invert()), InputDef_GamepadAxis("leftx", InputMod_Deadzone(JOYSTICK_DEADZONE) ) },
 									 yaxis = { InputDef_KeyboardKey('w'), InputDef_KeyboardKey("up"), InputDef_KeyboardKey('s', InputMod_Invert()), InputDef_KeyboardKey("down", InputMod_Invert()), InputDef_GamepadAxis("lefty", InputMod_Deadzone(JOYSTICK_DEADZONE) ) },
 									 xyaxis = { InputDef_TouchJoystick() } } ),
 
-	spaceBar = InputAction("bool", { InputDef_KeyboardKey("spacebar"), InputDef_GamepadButton(PS4_BTN_ID_Triangle) } ),
+	jump = InputAction("bool", { InputDef_KeyboardKey("spacebar"), InputDef_GamepadButton(PS4_BTN_ID_SQUARE) } ),
 
 	mouseMoved = InputAction("vector2d", { xyaxis = { InputDef_MousePosition() } } ),
 
-	mouseClicked = InputAction("bool", { InputDef_MouseClicked(1) } )
+	leftMouseClick = InputAction("bool", { InputDef_MouseClicked(1) } )
 }
 
 local demoLogic = {}
