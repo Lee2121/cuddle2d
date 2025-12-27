@@ -11,21 +11,27 @@ local PS4_BTN_ID_Triangle = 4
 local JOYSTICK_DEADZONE = .1
 
 local InputContext_Test = {
-	-- move = InputAction("vector2d", { xaxis = { InputDef_KeyboardKey('a'), InputDef_KeyboardKey("left"), InputDef_KeyboardKey('d', InputMod_Invert()), InputDef_KeyboardKey("right", InputMod_Invert()), InputDef_GamepadAxis("leftx", InputMod_Deadzone(JOYSTICK_DEADZONE) ) },
-	-- 								 yaxis = { InputDef_KeyboardKey('w'), InputDef_KeyboardKey("up"), InputDef_KeyboardKey('s', InputMod_Invert()), InputDef_KeyboardKey("down", InputMod_Invert()), InputDef_GamepadAxis("lefty", InputMod_Deadzone(JOYSTICK_DEADZONE) ) },
-	-- 								 xyaxis = { InputDef_TouchJoystick() } } ),
+	-- move = InputAction_Vector2({ xaxis = { InputDef_KeyboardKey('a'), InputDef_KeyboardKey("left"), InputDef_KeyboardKey('d', InputMod_Invert()), InputDef_KeyboardKey("right", InputMod_Invert()), InputDef_GamepadAxis("leftx", InputMod_Deadzone(JOYSTICK_DEADZONE) ) },
+	-- 							 yaxis = { InputDef_KeyboardKey('w'), InputDef_KeyboardKey("up"), InputDef_KeyboardKey('s', InputMod_Invert()), InputDef_KeyboardKey("down", InputMod_Invert()), InputDef_GamepadAxis("lefty", InputMod_Deadzone(JOYSTICK_DEADZONE) ) },
+	-- 							 xyaxis = { InputDef_TouchJoystick() } } ),
 
-	jump = InputAction("bool", { InputDef_KeyboardKey("space"), InputDef_GamepadButton(PS4_BTN_ID_SQUARE) } ),
+	jump = InputAction_Bool({ InputDef_KeyboardKey("space"), InputDef_GamepadButton(PS4_BTN_ID_SQUARE) } ),
 
 	-- mouseMoved = InputAction("vector2d", { xyaxis = { InputDef_MousePosition() } } ),
 
-	leftMouseClick = InputAction("bool", { InputDef_MouseClicked(1) } )
+	leftMouseClick = InputAction_Bool({ InputDef_MouseClicked(1) } )
 }
 
 local demoLogic = {}
 
 function demoLogic:onPlayerConnected(newPlayerInstance)
 	newPlayerInstance.inputManager:pushInputContext(InputContext_Test)
+
+	newPlayerInstance.inputManager:bindActionCallbacks(self, InputContext_Test.jump, self.onJumpStarted)
+end
+
+function demoLogic:onJumpStarted(value)
+	print("jump action detected", value)
 end
 
 function love.load()

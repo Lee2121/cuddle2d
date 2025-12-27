@@ -1,51 +1,76 @@
-InputAction = {}
+InputAction_Base = {}
 
-setmetatable(InputAction, InputAction)
-InputAction.__index = InputAction
+setmetatable(InputAction_Base, InputAction_Base)
+InputAction_Base.__index = InputAction_Base
 
-function InputAction:__call(valueType, inputs)
-	local definitionInstance = setmetatable({}, InputAction)
-	definitionInstance:new(valueType, inputs)
+function InputAction_Base:__call(inputs)
+	local definitionInstance = setmetatable({}, InputAction_Base)
+	definitionInstance:new(inputs)
 	return definitionInstance
 end
 
-function InputAction:new(valueType, inputs)
-	self.valueType = valueType
-
-	if valueType == "vector2d" then
-		self.xAxisInputs = inputs["xaxis"]
-		self.yAxisInputs = inputs["yaxis"]
-		self.xyAxisInputs = inputs["xyaxis"]
-	else
-		self.inputDefinitions = inputs
-	end
+function InputAction_Base:new(inputs)
+	self.inputDefinitions = inputs
 end
 
-function InputAction:activateForPlayer(playerInputManager)
-	local actionPlayerInstance = setmetatable({}, self)
+function InputAction_Base:__tostring()
+	return "inputaction_base"
+end
+
+function InputAction_Base:define()
+	local newActionDef = {}
+	setmetatable(newActionDef, self)
+	return newActionDef
+end
+
+function InputAction_Base:activateForPlayer(playerInputManager)
+	local actionPlayerInstance = setmetatable({}, InputAction_Base)
+	actionPlayerInstance.__index = InputAction_Base
 
 	actionPlayerInstance.linkedInputManager = playerInputManager
-	self.inputInstances = {}
+	actionPlayerInstance.inputInstances = {}
 
 	for _, inputDefinition in ipairs(self.inputDefinitions) do
   		local inputInstance = inputDefinition:activate_internal(playerInputManager)
-		BindToCallback(inputInstance.inputStartedCallbacks, self, self.linkedInputStarted)
-		BindToCallback(inputInstance.inputHeldCallbacks, self, self.linkedInputHeld)
-		BindToCallback(inputInstance.inputEndedCallbacks, self, self.linkedInputEnded)
-		table.insert(self.inputInstances, inputInstance)
+		BindToCallback(inputInstance.inputStartedCallbacks, actionPlayerInstance, actionPlayerInstance.linkedInputStarted)
+		BindToCallback(inputInstance.inputHeldCallbacks, actionPlayerInstance, actionPlayerInstance.linkedInputHeld)
+		BindToCallback(inputInstance.inputEndedCallbacks, actionPlayerInstance, actionPlayerInstance.linkedInputEnded)
+		table.insert(actionPlayerInstance.inputInstances, inputInstance)
 	end
+
+	actionPlayerInstance.onActionStartedCallbacks = {}
+	actionPlayerInstance.onActionHeldCallbacks = {}
+	actionPlayerInstance.onActionEndedCallbacks = {}
 
 	return actionPlayerInstance
 end
 
-function InputAction:linkedInputStarted(inputDef, value)
+InputAction_Vector2 = InputAction_Base:define()
+function InputAction_Vector2:new(inputs)
+	
+end
+
+function InputAction_Vector2:__tostring()
+	return "inputaction_vector2"
+end
+
+InputAction_Bool = InputAction_Base:define()
+
+function InputAction_Bool:__tostring()
+	return "inputaction_bool"
+end
+
+function InputAction_Base:linkedInputStarted(inputDef, value)
 	print("started")
+	BroadcastCallback(self.onActionStartedCallbacks, 1)
 end
 
-function InputAction:linkedInputHeld(inputDef, value)
+function InputAction_Base:linkedInputHeld(inputDef, value)
 	print("held")
+	BroadcastCallback(self.onActionHeldCallbacks, 1)
 end
 
-function InputAction:linkedInputEnded(inputDef, value)
+function InputAction_Base:linkedInputEnded(inputDef, value)
 	print("released")
+	BroadcastCallback(self.onActionEndedCallbacks, 0)
 end
