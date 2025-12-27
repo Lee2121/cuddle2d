@@ -170,7 +170,6 @@ end
 
 function InputDef_MousePosition:onMouseMoved(x, y, dy, dy, isTouch)
 	if not self.inputManager:isInputDeviceUsedByPlayer("mouseAndKeyboard") then return end
-
 	BroadcastInputStarted(self, {x, y})
 end
 

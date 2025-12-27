@@ -24,12 +24,11 @@ function PlayerInputManager:new(inputDevice)
 	self.actionStoppedCallbacks = {}
 	self.activeInputDevice = {}
 
-	self:registerInputDevice(inputDevice)
+	self.activeInputDevice = inputDevice
 end
 
 function PlayerInputManager:pushInputContext(inputContext)
 	print("Pushing Input Context ", inputContext)
-
 	table.insert(inputContextStack, inputContext)
 	for _, actionDefinition in pairs(inputContext) do
 		actionDefinition:activateForPlayer(self)
@@ -43,30 +42,6 @@ function PlayerInputManager:popInputContext(inputContext)
 			table.remove(inputContextStack, i)
 			break
 		end
-	end
-end
-
-function PlayerInputManager:registerInputDevice(inputDevice)
-	if inputDevice == "mouseAndKeyboard" then
-		self.activeInputDevice = inputDevice
-	elseif inputDevice == "touch" then
-		self.activeInputDevice = inputDevice
-	elseif InputDeviceManager.isInputDeviceAGamepad(inputDevice) then
-		self.activeInputDevice = inputDevice
-	else
-		error(string.format("failed to find registration behavior for input device %s"), inputDevice)
-	end
-end
-
-function PlayerInputManager:unregisterInputDevice(inputDevice)
-	if inputDevice == "mouseAndKeyboard" then
-		self.activeInputDevice = nil
-	elseif inputDevice == "touch" then
-		self.activeInputDevice = nil
-	elseif InputDeviceManager.isInputDeviceAGamepad(inputDevice) then
-		self.activeInputDevice = nil
-	else
-		error(string.format("failed to find unregistration behavior for input device %s"), inputDevice)
 	end
 end
 
