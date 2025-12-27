@@ -19,14 +19,18 @@ function InputAction:activateForPlayer(playerInputManager)
 	actionPlayerInstance.linkedInputManager = playerInputManager
 	for i, input in ipairs(self.inputs) do
 		BindToCallback(input.inputStartedCallbacks, self, self.linkedInputStarted)
+		BindToCallback(input.inputHeldCallbacks, self, self.linkedInputHeld)
 		BindToCallback(input.inputEndedCallbacks, self, self.linkedInputEnded)
 	end
 end
 
-function InputAction:linkedInputStarted(input)
-	print("started", input)
+function InputAction:linkedInputStarted(inputDef, value)
+	print(value)
 end
 
-function InputAction:linkedInputEnded(input)
-	print("ended", input)
+function InputAction:linkedInputHeld(input, value)
+
+end
+
+function InputAction:linkedInputEnded(input, value)
 end
