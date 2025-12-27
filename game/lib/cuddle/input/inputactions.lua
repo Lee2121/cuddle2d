@@ -23,8 +23,10 @@ end
 
 function InputAction:activateForPlayer(playerInputManager)
 	local actionPlayerInstance = setmetatable({}, self)
+
 	actionPlayerInstance.linkedInputManager = playerInputManager
 	self.inputInstances = {}
+
 	for _, inputDefinition in ipairs(self.inputDefinitions) do
   		local inputInstance = inputDefinition:activate_internal(playerInputManager)
 		BindToCallback(inputInstance.inputStartedCallbacks, self, self.linkedInputStarted)
@@ -32,6 +34,7 @@ function InputAction:activateForPlayer(playerInputManager)
 		BindToCallback(inputInstance.inputEndedCallbacks, self, self.linkedInputEnded)
 		table.insert(self.inputInstances, inputInstance)
 	end
+
 	return actionPlayerInstance
 end
 

@@ -23,6 +23,7 @@ function InputDef_Base:activate_internal(playerInputManager)
 	setmetatable(playerInputDefInstance, playerInputDefInstance)
 	playerInputDefInstance.inputManager = playerInputManager
 	playerInputDefInstance:activate(playerInputManager)
+
 	return playerInputDefInstance
 end
 
@@ -70,7 +71,8 @@ function InputDef_KeyboardKey:activate(playerInputManager)
 end
 
 function InputDef_KeyboardKey:onKeyPressed(key, scancode, isRepeat)
-	print(key, self.assignedKey)
+	if not self.inputManager:isInputDeviceUsedByPlayer("mouseAndKeyboard") then return end
+
 	if key == self.assignedKey then
 		if not isRepeat then
 			BroadcastInputStarted(self, 1)
@@ -81,6 +83,8 @@ function InputDef_KeyboardKey:onKeyPressed(key, scancode, isRepeat)
 end
 
 function InputDef_KeyboardKey:onKeyReleased(key)
+	if not self.inputManager:isInputDeviceUsedByPlayer("mouseAndKeyboard") then return end
+
 	if key == self.assignedKey then
 		BroadcastInputEnded(self, 0)
 	end
@@ -91,15 +95,15 @@ function InputDef_GamepadAxis:new(axisName)
 	self.axisName = axisName
 end
 
-function InputDef_GamepadAxis:activateForPlayer(playerInputManager)
+function InputDef_GamepadAxis:activate(playerInputManager)
 	BindToCallback(InputDeviceManager.onGamepadAxisCallbacks, self, self.onGamepadAxis)
 end
 
 function InputDef_GamepadAxis:onGamepadAxis(joystick, axis, value)
-	if self.inputManager:isInputDeviceUsedByPlayer(joystick) then
-		if axis == self.axisName then
-			BroadcastInputStarted(self, value)
-		end
+	if not self.inputManager:isInputDeviceUsedByPlayer(joystick) then return end
+
+	if axis == self.axisName then
+		BroadcastInputStarted(self, value)
 	end
 end
 
@@ -114,18 +118,18 @@ function InputDef_GamepadButton:activate(playerInputManager)
 end
 
 function InputDef_GamepadButton:onGamepadButtonPressed(joystick, button)
-	if self.inputManager:isInputDeviceUsedByPlayer(joystick) then
-		if button == self.buttonID then
-			BroadcastInputStarted(self, 1)
-		end
+	if not self.inputManager:isInputDeviceUsedByPlayer(joystick) then return end
+	
+	if button == self.buttonID then
+		BroadcastInputStarted(self, 1)
 	end
 end
 
 function InputDef_GamepadButton:onGamepadButtonReleased(joystick, button)
-	if self.inputManager:isInputDeviceUsedByPlayer(joystick) then
-		if button == self.buttonID then
-			BroadcastInputEnded(self, 0)
-		end
+	if not self.inputManager:isInputDeviceUsedByPlayer(joystick) then return end
+	
+	if button == self.buttonID then
+		BroadcastInputEnded(self, 0)
 	end
 end
 
@@ -144,12 +148,16 @@ function InputDef_MouseClicked:activate(playerInputManager)
 end
 
 function InputDef_MouseClicked:onMousePressed(x, y, button, isTouch, presses)
+	if not self.inputManager:isInputDeviceUsedByPlayer("mouseAndKeyboard") then return end
+
 	if button == self.buttonID then
 		BroadcastInputStarted(self, 1)
 	end
 end
 
 function InputDef_MouseClicked:onMouseReleased(x, y, button, isTouch, presses)
+	if not self.inputManager:isInputDeviceUsedByPlayer("mouseAndKeyboard") then return end
+
 	if button == self.buttonID then
 		BroadcastInputEnded(self, 0)
 	end
@@ -161,6 +169,8 @@ function InputDef_MousePosition:activate(playerInputManager)
 end
 
 function InputDef_MousePosition:onMouseMoved(x, y, dy, dy, isTouch)
+	if not self.inputManager:isInputDeviceUsedByPlayer("mouseAndKeyboard") then return end
+
 	BroadcastInputStarted(self, {x, y})
 end
 
