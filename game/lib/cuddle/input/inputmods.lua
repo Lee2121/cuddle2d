@@ -29,5 +29,17 @@ function InputMod_Deadzone:new(deadzoneValue)
 end
 
 function InputMod_Deadzone:ApplyMod(rawValue)
-	return self.deadzoneValue
+	local inputX, inputY = unpack(rawValue)
+
+	local function mapToDeadzone(rawValue, deadzoneValue)
+		if rawValue < deadzoneValue then
+			return 0
+		end
+		return ((rawValue) * (1 - deadzoneValue)) + deadzoneValue
+	end
+
+	inputX = mapToDeadzone(inputX, self.deadzoneValue)
+	inputY = mapToDeadzone(inputY, self.deadzoneValue)
+
+	return inputX, inputY
 end

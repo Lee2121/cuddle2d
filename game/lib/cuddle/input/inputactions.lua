@@ -25,12 +25,13 @@ function InputAction:activateForPlayer(playerInputManager)
 end
 
 function InputAction:linkedInputStarted(inputDef, value)
-	print(value)
+	print("started")
 end
 
 function InputAction:linkedInputHeld(input, value)
-
+	print("held")
 end
 
 function InputAction:linkedInputEnded(input, value)
+	print("released")
 end

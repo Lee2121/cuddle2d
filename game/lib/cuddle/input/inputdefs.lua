@@ -50,6 +50,7 @@ function InputDef_KeyboardKey:new(initData)
 	BindToCallback(InputDeviceManager.onKeyReleasedCallbacks, self, self.onKeyReleased)
 end
 
+
 function InputDef_KeyboardKey:onKeyPressed(key, scancode, isRepeat)
 	if key == self.assignedKey then
 		if not isRepeat then
@@ -68,6 +69,7 @@ end
 
 InputDef_GamepadAxis = InputDef_Base:createDef()
 function InputDef_GamepadAxis:new(axisName)
+	
 end
 
 InputDef_GamepadButton = InputDef_Base:createDef()

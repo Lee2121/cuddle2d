@@ -15,7 +15,6 @@ local InputContext_Test  = {
 									 yaxis = { InputDef_KeyboardKey('w'), InputDef_KeyboardKey("up"), InputDef_KeyboardKey('s', InputMod_Invert()), InputDef_KeyboardKey("down", InputMod_Invert()), InputDef_GamepadAxis("lefty", InputMod_Deadzone(JOYSTICK_DEADZONE) ) },
 									 xyaxis = { InputDef_TouchJoystick() } } ),
 
-
 	spaceBar = InputAction("bool", { InputDef_KeyboardKey("spacebar"), InputDef_GamepadButton(PS4_BTN_ID_Triangle) } ),
 }
 
