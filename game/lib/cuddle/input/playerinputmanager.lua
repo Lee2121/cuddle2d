@@ -25,18 +25,16 @@ function PlayerInputManager:__call(inputDevice)
 end
 
 function PlayerInputManager:new(inputDevice)
-
 	if inputDevice == nil then
 		error("invalid input device!")
 	end
-	
 	self:registerInputDevice(inputDevice)
 end
 
 function PlayerInputManager:pushInputContext(inputContext)
 	print("Pushing Input Context ", inputContext)
+	local inputContextInstance = inputContext
 	table.insert(inputContextStack, inputContext)
-
 	for _, actionDefinition in pairs(inputContext) do
 		actionDefinition:activateForPlayer(self)
 	end
@@ -54,13 +52,10 @@ end
 
 function PlayerInputManager:registerInputDevice(inputDevice)
 	if inputDevice == "mouseAndKeyboard" then
-		-- InputDeviceManager:bindToKeyboardCallbacks(self, self.keyPressed, self.keyReleased)
 		registeredInputDevices.mouseAndKeyboard = inputDevice
 	elseif inputDevice == "touch" then
-		-- InputDeviceManager:bindToTouchCallbacks(self, self.touchPressed, self.touchReleased, self.touchMoved)
 		registeredInputDevices.touch = inputDevice
 	elseif InputDeviceManager.isInputDeviceAGamepad(inputDevice) then
-		-- InputDeviceManager:bindToGamepadCallbacks(self, self.gamepadPressed, self.gamepadReleased, self.gamepadAxis)
 		registeredInputDevices.gamepad = inputDevice
 	else
 		error(string.format("failed to find registration behavior for input device %s"), inputDevice)
@@ -69,29 +64,27 @@ end
 
 function PlayerInputManager:unregisterInputDevice(inputDevice)
 	if inputDevice == "mouseAndKeyboard" then
-		-- InputDeviceManager:unregisterFromMouseAndKeyboardCallbacks(self)
-		registeredInputDevices.mouseKeyboard = nil
+		registeredInputDevices.mouseAndKeyboard = nil
 	elseif inputDevice == "touch" then
-		-- InputDeviceManager:unregisterFromTouchCallbacks(self)
 		registeredInputDevices.touch = nil
 	elseif InputDeviceManager.isInputDeviceAGamepad(inputDevice) then
-		-- InputDeviceManager:unregisterFromGamepadCallbacks(self)
 		registeredInputDevices.gamepad = nil
 	else
 		error(string.format("failed to find unregistration behavior for input device %s"), inputDevice)
 	end
 end
 
-local function GetInputNameFromDevice(inputDevice)
+function PlayerInputManager:isInputDeviceUsedByPlayer(inputDevice)
 	if inputDevice == "mouseAndKeyboard" then
-		return "mouseAndKeyboard"
+		return registeredInputDevices.mouseAndKeyboard ~= nil
 	elseif inputDevice == "touch" then
-		return "touch"
+		return registeredInputDevices.touch ~= nil
 	elseif InputDeviceManager.isInputDeviceAGamepad(inputDevice) then
-		return "gamepad"
+		return registeredInputDevices.gamepad == inputDevice
+	else
+		error(string.format("failed to find input device %s"), inputDevice)
+		return false
 	end
-	error(string.format("Failed to find an input name for device %s"), inputDevice)
-	return nil
 end
 
 function PlayerInputManager:gamepadPressed(joystick, button)

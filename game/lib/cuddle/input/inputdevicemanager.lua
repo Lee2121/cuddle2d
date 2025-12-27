@@ -22,14 +22,14 @@ InputDeviceManager = {
 	-- End Input Device Callbacks
 }
 
-function love.gamepadpressed(joystick, button)
+function love.joystickpressed(joystick, button)
 	if not InputDeviceManager:isInputDeviceConnected(joystick) then
 		InputDeviceManager:connectDevice(joystick)
 	end
 	BroadcastCallback(InputDeviceManager.onGamepadPressedCallbacks, joystick, button)
 end
 
-function love.gamepadreleased(joystick, button)
+function love.joystickreleased(joystick, button)
 	BroadcastCallback(InputDeviceManager.onGamepadReleasedCallbacks, joystick, button)
 end
 

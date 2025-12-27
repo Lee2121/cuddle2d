@@ -9,7 +9,7 @@ function InputMod_Base:createMod()
 	return mod
 end
 
-function InputMod_Base:new()
+function InputMod_Base:new(...)
 end
 
 function InputMod_Base:__call(...)

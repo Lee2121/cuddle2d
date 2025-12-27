@@ -1,8 +1,4 @@
-local InputDef_Base = {
-	inputStartedCallbacks = {},
-	inputHeldCallbacks = {},
-	inputEndedCallbacks = {}
-}
+local InputDef_Base = {}
 
 InputDef_Base.__index = InputDef_Base
 
@@ -13,11 +9,31 @@ function InputDef_Base:createDef()
 	return def
 end
 
+function InputDef_Base:activate(playerInputManager)
+end
+
+function InputDef_Base:activate_internal(playerInputManager)
+	local playerInputDefInstance = {}
+	
+	playerInputDefInstance.inputStartedCallbacks = {}
+	playerInputDefInstance.inputHeldCallbacks = {}
+	playerInputDefInstance.inputEndedCallbacks = {}
+
+	playerInputDefInstance.__index = self
+	setmetatable(playerInputDefInstance, playerInputDefInstance)
+	playerInputDefInstance.inputManager = playerInputManager
+	playerInputDefInstance:activate(playerInputManager)
+	return playerInputDefInstance
+end
+
 function InputDef_Base:__call(initData, ...)
-	local inputInstance = setmetatable({}, self)
-	inputInstance:new(initData)
-	inputInstance.modifiers = { ... } or {}
-	return inputInstance
+	local inputDefInstance = setmetatable({}, self)
+	inputDefInstance:new(initData)
+	inputDefInstance.modifiers = { ... } or {} -- how to handle this if ... is already a self contained table (multiple modifiers)
+	return inputDefInstance
+end
+
+function InputDef_Base:new(initData)
 end
 
 local function GetModifiedInputValue(inputDef, rawValue)
@@ -30,7 +46,6 @@ end
 
 local function BroadcastInputStarted(inputDef, rawValue)
 	local modifiedValue = GetModifiedInputValue(inputDef, rawValue)
-	print(modifiedValue)
 	BroadcastCallback(inputDef.inputStartedCallbacks, inputDef, modifiedValue)
 end
 
@@ -47,11 +62,15 @@ end
 InputDef_KeyboardKey = InputDef_Base:createDef()
 function InputDef_KeyboardKey:new(initData)
 	self.assignedKey = initData
+end
+
+function InputDef_KeyboardKey:activate(playerInputManager)
 	BindToCallback(InputDeviceManager.onKeyPressedCallbacks, self, self.onKeyPressed)
 	BindToCallback(InputDeviceManager.onKeyReleasedCallbacks, self, self.onKeyReleased)
 end
 
 function InputDef_KeyboardKey:onKeyPressed(key, scancode, isRepeat)
+	print(key, self.assignedKey)
 	if key == self.assignedKey then
 		if not isRepeat then
 			BroadcastInputStarted(self, 1)
@@ -70,31 +89,43 @@ end
 InputDef_GamepadAxis = InputDef_Base:createDef()
 function InputDef_GamepadAxis:new(axisName)
 	self.axisName = axisName
+end
+
+function InputDef_GamepadAxis:activateForPlayer(playerInputManager)
 	BindToCallback(InputDeviceManager.onGamepadAxisCallbacks, self, self.onGamepadAxis)
 end
 
 function InputDef_GamepadAxis:onGamepadAxis(joystick, axis, value)
-	if axis == self.axisName then
-		BroadcastInputStarted(self, value)
+	if self.inputManager:isInputDeviceUsedByPlayer(joystick) then
+		if axis == self.axisName then
+			BroadcastInputStarted(self, value)
+		end
 	end
 end
 
 InputDef_GamepadButton = InputDef_Base:createDef()
 function InputDef_GamepadButton:new(buttonID)
 	self.buttonID = buttonID
+end
+
+function InputDef_GamepadButton:activate(playerInputManager)
 	BindToCallback(InputDeviceManager.onGamepadPressedCallbacks, self, self.onGamepadButtonPressed)
 	BindToCallback(InputDeviceManager.onGamepadReleasedCallbacks, self, self.onGamepadButtonReleased)
 end
 
 function InputDef_GamepadButton:onGamepadButtonPressed(joystick, button)
-	if button == self.buttonID then
-		BroadcastInputStarted(self, 1)
+	if self.inputManager:isInputDeviceUsedByPlayer(joystick) then
+		if button == self.buttonID then
+			BroadcastInputStarted(self, 1)
+		end
 	end
 end
 
 function InputDef_GamepadButton:onGamepadButtonReleased(joystick, button)
-	if button == self.buttonID then
-		BroadcastInputEnded(self, 0)
+	if self.inputManager:isInputDeviceUsedByPlayer(joystick) then
+		if button == self.buttonID then
+			BroadcastInputEnded(self, 0)
+		end
 	end
 end
 
@@ -105,6 +136,9 @@ end
 InputDef_MouseClicked = InputDef_Base:createDef()
 function InputDef_MouseClicked:new(buttonID)
 	self.buttonID = buttonID
+end
+
+function InputDef_MouseClicked:activate(playerInputManager)
 	BindToCallback(InputDeviceManager.onMousePressedCallbacks, self, self.onMousePressed)
 	BindToCallback(InputDeviceManager.onMouseReleasedCallbacks, self, self.onMouseReleased)
 end
@@ -122,7 +156,7 @@ function InputDef_MouseClicked:onMouseReleased(x, y, button, isTouch, presses)
 end
 
 InputDef_MousePosition = InputDef_Base:createDef()
-function InputDef_MousePosition:new()
+function InputDef_MousePosition:activate(playerInputManager)
 	BindToCallback(InputDeviceManager.onMouseMovedCallbacks, self, self.onMouseMoved)
 end
 

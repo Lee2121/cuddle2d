@@ -11,27 +11,38 @@ end
 
 function InputAction:new(valueType, inputs)
 	self.valueType = valueType
-	self.inputs = inputs
+
+	if valueType == "vector2d" then
+		self.xAxisInputs = inputs["xaxis"]
+		self.yAxisInputs = inputs["yaxis"]
+		self.xyAxisInputs = inputs["xyaxis"]
+	else
+		self.inputDefinitions = inputs
+	end
 end
 
 function InputAction:activateForPlayer(playerInputManager)
 	local actionPlayerInstance = setmetatable({}, self)
 	actionPlayerInstance.linkedInputManager = playerInputManager
-	for i, input in ipairs(self.inputs) do
-		BindToCallback(input.inputStartedCallbacks, self, self.linkedInputStarted)
-		BindToCallback(input.inputHeldCallbacks, self, self.linkedInputHeld)
-		BindToCallback(input.inputEndedCallbacks, self, self.linkedInputEnded)
+	self.inputInstances = {}
+	for _, inputDefinition in ipairs(self.inputDefinitions) do
+  		local inputInstance = inputDefinition:activate_internal(playerInputManager)
+		BindToCallback(inputInstance.inputStartedCallbacks, self, self.linkedInputStarted)
+		BindToCallback(inputInstance.inputHeldCallbacks, self, self.linkedInputHeld)
+		BindToCallback(inputInstance.inputEndedCallbacks, self, self.linkedInputEnded)
+		table.insert(self.inputInstances, inputInstance)
 	end
+	return actionPlayerInstance
 end
 
 function InputAction:linkedInputStarted(inputDef, value)
 	print("started")
 end
 
-function InputAction:linkedInputHeld(input, value)
+function InputAction:linkedInputHeld(inputDef, value)
 	print("held")
 end
 
-function InputAction:linkedInputEnded(input, value)
+function InputAction:linkedInputEnded(inputDef, value)
 	print("released")
 end
