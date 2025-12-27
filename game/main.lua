@@ -16,6 +16,10 @@ local InputContext_Test  = {
 									 xyaxis = { InputDef_TouchJoystick() } } ),
 
 	spaceBar = InputAction("bool", { InputDef_KeyboardKey("spacebar"), InputDef_GamepadButton(PS4_BTN_ID_Triangle) } ),
+
+	mouseMoved = InputAction("vector2d", { xyaxis = { InputDef_MousePosition() } } ),
+
+	mouseClicked = InputAction("bool", { InputDef_MouseClicked(1) } )
 }
 
 local demoLogic = {}

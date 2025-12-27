@@ -78,10 +78,30 @@ end
 
 InputDef_MouseClicked = InputDef_Base:createDef()
 function InputDef_MouseClicked:new(buttonID)
+	self.buttonID = buttonID
+	BindToCallback(InputDeviceManager.onMousePressedCallbacks, self, self.onMousePressed)
+	BindToCallback(InputDeviceManager.onMouseReleasedCallbacks, self, self.onMouseReleased)
+end
+
+function InputDef_MouseClicked:onMousePressed(x, y, button, isTouch, presses)
+	if button == self.buttonID then
+		BroadcastInputStarted(self, 1)
+	end
+end
+
+function InputDef_MouseClicked:onMouseReleased(x, y, button, isTouch, presses)
+	if button == self.buttonID then
+		BroadcastInputEnded(self, 0)
+	end
 end
 
 InputDef_MousePosition = InputDef_Base:createDef()
 function InputDef_MousePosition:new()
+	BindToCallback(InputDeviceManager.onMouseMovedCallbacks, self, self.onMouseMoved)
+end
+
+function InputDef_MousePosition:onMouseMoved(x, y, dy, dy, isTouch)
+	BroadcastInputStarted(self, {x, y})
 end
 
 InputDef_TouchDrag = InputDef_Base:createDef()
