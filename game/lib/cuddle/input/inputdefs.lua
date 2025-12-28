@@ -16,7 +16,6 @@ function InputDef_Base:activate_internal(playerInputManager)
 	local playerInputDefInstance = {}
 	
 	playerInputDefInstance.inputStartedCallbacks = {}
-	playerInputDefInstance.inputHeldCallbacks = {}
 	playerInputDefInstance.inputEndedCallbacks = {}
 
 	playerInputDefInstance.__index = self
@@ -50,11 +49,6 @@ local function BroadcastInputStarted(inputDef, rawValue)
 	BroadcastCallback(inputDef.inputStartedCallbacks, inputDef, modifiedValue)
 end
 
-local function BroadcastInputHeld(inputDef, rawValue)
-	local modifiedValue = GetModifiedInputValue(inputDef, rawValue)
-	BroadcastCallback(inputDef.inputHeldCallbacks, inputDef, modifiedValue)
-end
-
 local function BroadcastInputEnded(inputDef, rawValue)
 	local modifiedValue = GetModifiedInputValue(inputDef, rawValue)
 	BroadcastCallback(inputDef.inputEndedCallbacks, inputDef, modifiedValue)
@@ -74,11 +68,7 @@ function InputDef_KeyboardKey:onKeyPressed(key, scancode, isRepeat)
 	if not self.inputManager:isInputDeviceUsedByPlayer("mouseAndKeyboard") then return end
 
 	if key == self.assignedKey then
-		if not isRepeat then
-			BroadcastInputStarted(self, 1)
-		else
-			BroadcastInputHeld(self, 1)
-		end
+		BroadcastInputStarted(self, 1)
 	end
 end
 

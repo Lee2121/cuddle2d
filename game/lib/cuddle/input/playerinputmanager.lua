@@ -73,7 +73,7 @@ function PlayerInputManager:findActionInstance(action)
 	return nil
 end
 
-function PlayerInputManager:bindActionCallbacks(listener, action, startedCallback, heldCallback, endedCallback)
+function PlayerInputManager:bindActionCallbacks(listener, action, startedCallback, endedCallback)
 	local actionInstance = self:findActionInstance(action)
 	if actionInstance == nil then
 		error("failed to find a matching action")
@@ -82,9 +82,6 @@ function PlayerInputManager:bindActionCallbacks(listener, action, startedCallbac
 
 	if startedCallback ~= nil then
 		BindToCallback(actionInstance.onActionStartedCallbacks, listener, startedCallback)
-	end
-	if heldCallback ~= nil then
-		BindToCallback(actionInstance.onActionHeldCallbacks, listener, heldCallback)
 	end
 	if endedCallback ~= nil then
 		BindToCallback(actionInstance.onActionEndedCallbacks, listener, endedCallback)
@@ -99,7 +96,6 @@ function PlayerInputManager:unbindActionCallbacks(listener, action)
 	end
 
 	UnregisterAllCallbacks(actionInstance.onActionStartedCallbacks, listener)
-	UnregisterAllCallbacks(actionInstance.onActionHeldCallbacks, listener)
 	UnregisterAllCallbacks(actionInstance.onActionEndedCallbacks, listener)
 end
 
