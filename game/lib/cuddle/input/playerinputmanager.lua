@@ -66,7 +66,7 @@ end
 
 function PlayerInputManager:findActionInstance(action)
 	for _, actionInstance in ipairs(self.activeActionInstances) do
-		if getmetatable(actionInstance) == getmetatable(action) then
+		if actionInstance.originalDefinition == action then
 			return actionInstance
 		end
 	end

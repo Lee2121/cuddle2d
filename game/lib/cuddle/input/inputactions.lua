@@ -29,6 +29,7 @@ function InputAction_Base:activateForPlayer(playerInputManager)
 
 	actionPlayerInstance.linkedInputManager = playerInputManager
 	actionPlayerInstance.inputInstances = {}
+	actionPlayerInstance.originalDefinition = self
 
 	for _, inputDefinition in ipairs(self.inputDefinitions) do
   		local inputInstance = inputDefinition:activate_internal(playerInputManager)
