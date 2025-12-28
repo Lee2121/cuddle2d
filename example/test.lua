@@ -1,7 +1,7 @@
-require "lib.cuddle.input.inputdevicemanager"
-require "lib.cuddle.input.inputdefs"
-require "lib.cuddle.input.inputmods"
-require "lib.cuddle.players.playermanager"
+require "input.inputdevicemanager"
+require "input.inputdefs"
+require "input.inputmods"
+require "players.playermanager"
 
 local PS4_BTN_ID_X = 1
 local PS4_BTN_ID_CIRCLE = 2
