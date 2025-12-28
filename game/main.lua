@@ -25,6 +25,9 @@ local InputContext_Test = {
 local demoLogic = {}
 
 function demoLogic:onPlayerConnected(newPlayerInstance)
+
+	self.playerInstance = newPlayerInstance
+
 	newPlayerInstance.inputManager:pushInputContext(InputContext_Test)
 
 	newPlayerInstance.inputManager:bindActionCallbacks(self, InputContext_Test.jump, self.onJumpStarted)

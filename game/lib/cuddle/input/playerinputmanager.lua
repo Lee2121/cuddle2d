@@ -92,9 +92,16 @@ function PlayerInputManager:bindActionCallbacks(listener, action, startedCallbac
 	end
 end
 
-function PlayerInputManager:unbindActionCallbacks(action)
-	-- find the action
-	-- unbind from the callbacks
+function PlayerInputManager:unbindActionCallbacks(listener, action)
+	local actionInstance = self:findActionInstance(action)
+	if actionInstance == nil then
+		error("failed to find a matching action")
+		return
+	end
+
+	UnregisterAllCallbacks(actionInstance.onActionStartedCallbacks, listener)
+	UnregisterAllCallbacks(actionInstance.onActionHeldCallbacks, listener)
+	UnregisterAllCallbacks(actionInstance.onActionEndedCallbacks, listener)
 end
 
 function PlayerInputManager:getActionValue(action)
