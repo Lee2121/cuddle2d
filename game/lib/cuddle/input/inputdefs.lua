@@ -9,19 +9,24 @@ function InputDef_Base:createDef()
 	return def
 end
 
-function InputDef_Base:activate(playerInputManager)
+function InputDef_Base:activate(owningActionInstance)
 end
 
-function InputDef_Base:activate_internal(playerInputManager)
+function InputDef_Base:activate_internal(owningActionInstance)
 	local playerInputDefInstance = {}
 	
 	playerInputDefInstance.inputStartedCallbacks = {}
 	playerInputDefInstance.inputEndedCallbacks = {}
 
-	playerInputDefInstance.__index = self
 	setmetatable(playerInputDefInstance, playerInputDefInstance)
-	playerInputDefInstance.inputManager = playerInputManager
-	playerInputDefInstance:activate(playerInputManager)
+	playerInputDefInstance.__index = self
+
+	BindToCallback(playerInputDefInstance.inputStartedCallbacks, owningActionInstance, owningActionInstance.linkedInputStarted)
+	BindToCallback(playerInputDefInstance.inputEndedCallbacks, owningActionInstance, owningActionInstance.linkedInputEnded)
+
+	playerInputDefInstance.inputManager = owningActionInstance.linkedInputManager
+
+	playerInputDefInstance:activate(owningActionInstance)
 
 	return playerInputDefInstance
 end
