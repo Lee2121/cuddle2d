@@ -19,7 +19,7 @@ local InputContext_Test = {
 
 	-- mouseMoved = InputAction("vector2d", { xyaxis = { InputDef_MousePosition() } } ),
 
-	leftMouseClick = InputAction_Bool({ InputDef_MouseClicked(1) } )
+	leftMouseClick = InputAction_Bool({ InputDef_MouseClicked(1), InputDef_KeyboardKey("return") } )
 }
 
 local demoLogic = {}

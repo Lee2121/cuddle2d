@@ -32,6 +32,7 @@ function InputAction_Base:activateForPlayer(playerInputManager)
 	actionPlayerInstance.originalDefinition = self
 
 	actionPlayerInstance.value = 0
+	actionPlayerInstance.startedInputs = {} -- list of linked inputs that have "started" but not ended
 
 	for _, inputDefinition in ipairs(self.inputDefinitions) do
   		local inputInstance = inputDefinition:activate_internal(playerInputManager)
@@ -62,13 +63,30 @@ function InputAction_Bool:__tostring()
 end
 
 function InputAction_Base:linkedInputStarted(inputDef, value)
-	print("started")
+	
 	self.value = value
-	BroadcastCallback(self.onActionStartedCallbacks, value)
+	
+	if #self.startedInputs == 0 then
+		print("started")
+		BroadcastCallback(self.onActionStartedCallbacks, value)
+	end
+
+	table.insert(self.startedInputs, inputDef)
 end
 
 function InputAction_Base:linkedInputEnded(inputDef, value)
-	print("released")
 	self.value = value
-	BroadcastCallback(self.onActionEndedCallbacks, value)
+
+	self.startedInputs[inputDef] = nil
+
+	for i = #self.startedInputs, 1, -1 do
+		if self.startedInputs[i] == inputDef then
+			table.remove(self.startedInputs, i)
+		end
+	end
+
+	if #self.startedInputs == 0 then
+		print("released")
+		BroadcastCallback(self.onActionEndedCallbacks, value)
+	end
 end
