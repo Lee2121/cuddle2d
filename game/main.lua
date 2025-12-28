@@ -15,11 +15,11 @@ local InputContext_Test = {
 	-- 							 yaxis = { InputDef_KeyboardKey('w'), InputDef_KeyboardKey("up"), InputDef_KeyboardKey('s', InputMod_Invert()), InputDef_KeyboardKey("down", InputMod_Invert()), InputDef_GamepadAxis("lefty", InputMod_Deadzone(JOYSTICK_DEADZONE) ) },
 	-- 							 xyaxis = { InputDef_TouchJoystick() } } ),
 
-	jump = InputAction_Bool({ InputDef_KeyboardKey("space"), InputDef_GamepadButton(PS4_BTN_ID_SQUARE) } ),
+	jump = InputAction_Bool( { InputDef_KeyboardKey("space"), InputDef_GamepadButton(PS4_BTN_ID_SQUARE) } ),
 
-	-- mouseMoved = InputAction("vector2d", { xyaxis = { InputDef_MousePosition() } } ),
+	mouseMoved = InputAction_Vector2( { xyaxis = { InputDef_MousePosition() } } ),
 
-	leftMouseClick = InputAction_Bool({ InputDef_MouseClicked(1), InputDef_KeyboardKey("return") } )
+	leftMouseClick = InputAction_Bool( { InputDef_MouseClicked(1), InputDef_KeyboardKey("return") } )
 }
 
 local demoLogic = {}
@@ -45,7 +45,9 @@ end
 function love.update()
 	if demoLogic.playerInstance ~= nil then
 		local jumpvalue = demoLogic.playerInstance.inputManager:getActionValue(InputContext_Test.jump)
-		print(jumpvalue)
+		print("jump val: ", jumpvalue)
+		local mousevalue = demoLogic.playerInstance.inputManager:getActionValue(InputContext_Test.mouseMoved)
+		print("mouse pos: ", mousevalue[1], mousevalue[2])
 	end
 end
 

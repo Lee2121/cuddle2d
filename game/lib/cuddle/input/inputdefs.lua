@@ -9,17 +9,34 @@ function InputDef_Base:createDef()
 	return def
 end
 
+function InputDef_Base:new(initData)
+end
+
+function InputDef_Base:__call(initData, ...)
+	local inputDefInstance = setmetatable({}, self)
+	inputDefInstance.__index = inputDefInstance
+	inputDefInstance:new(initData)
+	inputDefInstance.modifiers = { ... } or {} -- how to handle this if ... is already a self contained table (multiple modifiers)
+	return inputDefInstance
+end
+
 function InputDef_Base:activate(owningActionInstance)
+end
+
+function InputDef_Base:__tostring()
+	return "InputDef_Base"
 end
 
 function InputDef_Base:activate_internal(owningActionInstance)
 	local playerInputDefInstance = {}
+
+	setmetatable(playerInputDefInstance, self)
+	playerInputDefInstance.__index = playerInputDefInstance
+
+	playerInputDefInstance.originalDefinition = self
 	
 	playerInputDefInstance.inputStartedCallbacks = {}
 	playerInputDefInstance.inputEndedCallbacks = {}
-
-	setmetatable(playerInputDefInstance, playerInputDefInstance)
-	playerInputDefInstance.__index = self
 
 	BindToCallback(playerInputDefInstance.inputStartedCallbacks, owningActionInstance, owningActionInstance.linkedInputStarted)
 	BindToCallback(playerInputDefInstance.inputEndedCallbacks, owningActionInstance, owningActionInstance.linkedInputEnded)
@@ -29,16 +46,6 @@ function InputDef_Base:activate_internal(owningActionInstance)
 	playerInputDefInstance:activate(owningActionInstance)
 
 	return playerInputDefInstance
-end
-
-function InputDef_Base:__call(initData, ...)
-	local inputDefInstance = setmetatable({}, self)
-	inputDefInstance:new(initData)
-	inputDefInstance.modifiers = { ... } or {} -- how to handle this if ... is already a self contained table (multiple modifiers)
-	return inputDefInstance
-end
-
-function InputDef_Base:new(initData)
 end
 
 local function GetModifiedInputValue(inputDef, rawValue)
@@ -62,6 +69,10 @@ end
 InputDef_KeyboardKey = InputDef_Base:createDef()
 function InputDef_KeyboardKey:new(initData)
 	self.assignedKey = initData
+end
+
+function InputDef_KeyboardKey:__tostring()
+	return "InputDef_KeyboardKey"
 end
 
 function InputDef_KeyboardKey:activate(playerInputManager)
@@ -90,6 +101,10 @@ function InputDef_GamepadAxis:new(axisName)
 	self.axisName = axisName
 end
 
+function InputDef_GamepadAxis:__tostring()
+	return "InputDef_GamepadAxis"
+end
+
 function InputDef_GamepadAxis:activate(playerInputManager)
 	BindToCallback(InputDeviceManager.onGamepadAxisCallbacks, self, self.onGamepadAxis)
 end
@@ -105,6 +120,10 @@ end
 InputDef_GamepadButton = InputDef_Base:createDef()
 function InputDef_GamepadButton:new(buttonID)
 	self.buttonID = buttonID
+end
+
+function InputDef_GamepadButton:__tostring()
+	return "InputDef_GamepadButton"
 end
 
 function InputDef_GamepadButton:activate(playerInputManager)
@@ -132,9 +151,17 @@ InputDef_GamepadHat = InputDef_Base:createDef()
 function InputDef_GamepadHat:new(buttonID)
 end
 
+function InputDef_GamepadHat:__tostring()
+	return "InputDef_GamepadHat"
+end
+
 InputDef_MouseClicked = InputDef_Base:createDef()
 function InputDef_MouseClicked:new(buttonID)
 	self.buttonID = buttonID
+end
+
+function InputDef_MouseClicked:__tostring()
+	return "InputDef_MouseClicked"
 end
 
 function InputDef_MouseClicked:activate(playerInputManager)
@@ -163,6 +190,10 @@ function InputDef_MousePosition:activate(playerInputManager)
 	BindToCallback(InputDeviceManager.onMouseMovedCallbacks, self, self.onMouseMoved)
 end
 
+function InputDef_MousePosition:__tostring()
+	return "InputDef_MousePosition"
+end
+
 function InputDef_MousePosition:onMouseMoved(x, y, dy, dy, isTouch)
 	if not self.inputManager:isInputDeviceUsedByPlayer("mouseAndKeyboard") then return end
 	BroadcastInputStarted(self, {x, y})
@@ -172,6 +203,14 @@ InputDef_TouchDrag = InputDef_Base:createDef()
 function InputDef_TouchDrag:new()
 end
 
+function InputDef_TouchDrag:__tostring()
+	return "InputDef_TouchDrag"
+end
+
 InputDef_TouchJoystick = InputDef_Base:createDef()
 function InputDef_TouchJoystick:new()
+end
+
+function InputDef_TouchJoystick:__tostring()
+	return "InputDef_TouchJoystick"
 end
