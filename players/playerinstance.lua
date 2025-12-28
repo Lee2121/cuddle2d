@@ -1,4 +1,4 @@
-PlayerInputManager = require "lib.cuddle.input.playerinputmanager"
+PlayerInputManager = require "lib.cuddle2d.input.playerinputmanager"
 
 PlayerInstance = {}
 

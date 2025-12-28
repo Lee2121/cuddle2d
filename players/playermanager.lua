@@ -1,6 +1,6 @@
-require "lib.cuddle.utils.callbacks"
-require "lib.cuddle.input.inputdevicemanager"
-require "lib.cuddle.players.playerinstance"
+require "lib.cuddle2d.utils.callbacks"
+require "lib.cuddle2d.input.inputdevicemanager"
+require "lib.cuddle2d.players.playerinstance"
 
 PlayerManager = {
 	connectedPlayers = {},

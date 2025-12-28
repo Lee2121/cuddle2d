@@ -1,6 +1,6 @@
-InputDeviceManager = require "lib.cuddle.input.inputdevicemanager"
-require "lib.cuddle.utils.callbacks"
-require "lib.cuddle.input.inputactions"
+InputDeviceManager = require "lib.cuddle2d.input.inputdevicemanager"
+require "lib.cuddle2d.utils.callbacks"
+require "lib.cuddle2d.input.inputactions"
 
 PlayerInputManager = {}
 
