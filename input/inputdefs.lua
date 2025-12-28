@@ -35,11 +35,11 @@ function InputDef_Base:activate_internal(owningActionInstance)
 
 	playerInputDefInstance.originalDefinition = self
 	
-	playerInputDefInstance.inputStartedCallbacks = {}
-	playerInputDefInstance.inputEndedCallbacks = {}
+	playerInputDefInstance.onInputStartedCallbacks = {}
+	playerInputDefInstance.onInputEndedCallbacks = {}
 
-	BindToCallback(playerInputDefInstance.inputStartedCallbacks, owningActionInstance, owningActionInstance.linkedInputStarted)
-	BindToCallback(playerInputDefInstance.inputEndedCallbacks, owningActionInstance, owningActionInstance.linkedInputEnded)
+	BindToCallback(playerInputDefInstance.onInputStartedCallbacks, owningActionInstance, owningActionInstance.linkedInputStarted)
+	BindToCallback(playerInputDefInstance.onInputEndedCallbacks, owningActionInstance, owningActionInstance.linkedInputEnded)
 
 	playerInputDefInstance.inputManager = owningActionInstance.linkedInputManager
 
@@ -58,12 +58,12 @@ end
 
 local function BroadcastInputStarted(inputDef, rawValue)
 	local modifiedValue = GetModifiedInputValue(inputDef, rawValue)
-	BroadcastCallback(inputDef.inputStartedCallbacks, inputDef, modifiedValue)
+	BroadcastCallback(inputDef.onInputStartedCallbacks, inputDef, modifiedValue)
 end
 
 local function BroadcastInputEnded(inputDef, rawValue)
 	local modifiedValue = GetModifiedInputValue(inputDef, rawValue)
-	BroadcastCallback(inputDef.inputEndedCallbacks, inputDef, modifiedValue)
+	BroadcastCallback(inputDef.onInputEndedCallbacks, inputDef, modifiedValue)
 end
 
 InputDef_KeyboardKey = InputDef_Base:createDef()

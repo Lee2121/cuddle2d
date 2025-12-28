@@ -51,10 +51,10 @@ function InputAction_Base:activateForPlayer(playerInputManager)
 end
 
 function InputAction_Base:linkedInputStarted(inputDefInstance, value)
-	
+
 	self.rawValue = value 
 	self.value = self:calcValueForInput(inputDefInstance, value)
-	
+
 	if #self.startedInputs == 0 then
 		BroadcastCallback(self.onActionStartedCallbacks, value)
 	end
@@ -81,9 +81,12 @@ function InputAction_Base:linkedInputEnded(inputDefInstance, value)
 		end
 	end
 
+	-- We may eventually want this value to only update when we have released all inputs. Eg if there are two keyboard keys linked to the same action, and I press both, then release one, what is the expected behavior?
+	-- May want to move this value update to only happen if #self.startedInputs == 0, but in that case, we need to add special handling for the InputAction_Vector2, as we will want to make sure the different actions can be updated independently.
+	self.rawValue = value
+	self.value = self:calcValueForInput(inputDefInstance, value)
+
 	if #self.startedInputs == 0 then
-		self.rawValue = value
-		self.value = self:calcValueForInput(inputDefInstance, value)
 		BroadcastCallback(self.onActionEndedCallbacks, value)
 	end
 end
