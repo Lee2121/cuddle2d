@@ -56,11 +56,22 @@ function InputAction_Base:linkedInputStarted(inputDefInstance, value)
 	self.value = self:calcValueForInput(inputDefInstance, value)
 	
 	if #self.startedInputs == 0 then
-		print("started")
 		BroadcastCallback(self.onActionStartedCallbacks, value)
 	end
 
-	table.insert(self.startedInputs, inputDefInstance)
+	local function hasInputBeenStarted(inputDefInstance)
+		for _, inputDef in ipairs(self.startedInputs) do
+			if inputDef == inputDefInstance then
+				return true
+			end
+		end
+		return false
+	end
+
+	if not hasInputBeenStarted(inputDefInstance) then
+		print("inserting ", inputDefInstance)
+		table.insert(self.startedInputs, inputDefInstance)
+	end
 end
 
 function InputAction_Base:linkedInputEnded(inputDefInstance, value)
@@ -72,7 +83,6 @@ function InputAction_Base:linkedInputEnded(inputDefInstance, value)
 	end
 
 	if #self.startedInputs == 0 then
-		print("released")
 		self.rawValue = value
 		self.value = self:calcValueForInput(inputDefInstance, value)
 		BroadcastCallback(self.onActionEndedCallbacks, value)
@@ -145,9 +155,9 @@ function InputAction_Vector2:calcValueForInput(inputDefInstance, value)
 	end
 
 	if doesInputControlAxis(inputDefInstance, self.xAxisInputs) then
-		return { value[1], self.value[2] }
+		return { value, self.value[2] }
 	elseif doesInputControlAxis(inputDefInstance, self.yAxisInputs) then
-		return { self.value[1], value[2] }
+		return { self.value[1], value }
 	elseif doesInputControlAxis(inputDefInstance, self.xyAxisInputs) then
 		return value
 	end

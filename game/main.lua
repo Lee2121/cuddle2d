@@ -11,9 +11,9 @@ local PS4_BTN_ID_Triangle = 4
 local JOYSTICK_DEADZONE = .1
 
 local InputContext_Test = {
-	-- move = InputAction_Vector2({ xaxis = { InputDef_KeyboardKey('a'), InputDef_KeyboardKey("left"), InputDef_KeyboardKey('d', InputMod_Invert()), InputDef_KeyboardKey("right", InputMod_Invert()), InputDef_GamepadAxis("leftx", InputMod_Deadzone(JOYSTICK_DEADZONE) ) },
-	-- 							 yaxis = { InputDef_KeyboardKey('w'), InputDef_KeyboardKey("up"), InputDef_KeyboardKey('s', InputMod_Invert()), InputDef_KeyboardKey("down", InputMod_Invert()), InputDef_GamepadAxis("lefty", InputMod_Deadzone(JOYSTICK_DEADZONE) ) },
-	-- 							 xyaxis = { InputDef_TouchJoystick() } } ),
+	move = InputAction_Vector2({ xaxis = { InputDef_KeyboardKey('a'), InputDef_KeyboardKey("left"), InputDef_KeyboardKey('d', InputMod_Invert()), InputDef_KeyboardKey("right", InputMod_Invert()), InputDef_GamepadAxis("leftx", InputMod_Deadzone(JOYSTICK_DEADZONE) ) },
+								 yaxis = { InputDef_KeyboardKey('w'), InputDef_KeyboardKey("up"), InputDef_KeyboardKey('s', InputMod_Invert()), InputDef_KeyboardKey("down", InputMod_Invert()), InputDef_GamepadAxis("lefty", InputMod_Deadzone(JOYSTICK_DEADZONE) ) },
+								 xyaxis = { InputDef_TouchJoystick() } } ),
 
 	jump = InputAction_Bool( { InputDef_KeyboardKey("space"), InputDef_GamepadButton(PS4_BTN_ID_SQUARE) } ),
 
@@ -45,9 +45,13 @@ end
 function love.update()
 	if demoLogic.playerInstance ~= nil then
 		local jumpvalue = demoLogic.playerInstance.inputManager:getActionValue(InputContext_Test.jump)
-		print("jump val: ", jumpvalue)
+		--print("jump val: ", jumpvalue)
+		
 		local mousevalue = demoLogic.playerInstance.inputManager:getActionValue(InputContext_Test.mouseMoved)
-		print("mouse pos: ", mousevalue[1], mousevalue[2])
+		--print("mouse pos: ", mousevalue[1], mousevalue[2])
+
+		local moveValue = demoLogic.playerInstance.inputManager:getActionValue(InputContext_Test.move)
+		print("move input", moveValue[1], moveValue[2])
 	end
 end
 
