@@ -69,7 +69,6 @@ function InputAction_Base:linkedInputStarted(inputDefInstance, value)
 	end
 
 	if not hasInputBeenStarted(inputDefInstance) then
-		print("inserting ", inputDefInstance)
 		table.insert(self.startedInputs, inputDefInstance)
 	end
 end
