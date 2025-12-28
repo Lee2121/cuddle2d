@@ -43,7 +43,10 @@ function love.load()
 end
 
 function love.update()
-	
+	if demoLogic.playerInstance ~= nil then
+		local jumpvalue = demoLogic.playerInstance.inputManager:getActionValue(InputContext_Test.jump)
+		print(jumpvalue)
+	end
 end
 
 function love.draw()

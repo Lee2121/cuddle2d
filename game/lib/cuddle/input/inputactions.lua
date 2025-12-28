@@ -31,6 +31,8 @@ function InputAction_Base:activateForPlayer(playerInputManager)
 	actionPlayerInstance.inputInstances = {}
 	actionPlayerInstance.originalDefinition = self
 
+	actionPlayerInstance.value = 0
+
 	for _, inputDefinition in ipairs(self.inputDefinitions) do
   		local inputInstance = inputDefinition:activate_internal(playerInputManager)
 		BindToCallback(inputInstance.inputStartedCallbacks, actionPlayerInstance, actionPlayerInstance.linkedInputStarted)
@@ -63,15 +65,18 @@ end
 
 function InputAction_Base:linkedInputStarted(inputDef, value)
 	print("started")
+	self.value = value
 	BroadcastCallback(self.onActionStartedCallbacks, 1)
 end
 
 function InputAction_Base:linkedInputHeld(inputDef, value)
 	print("held")
+	self.value = value
 	BroadcastCallback(self.onActionHeldCallbacks, 1)
 end
 
 function InputAction_Base:linkedInputEnded(inputDef, value)
 	print("released")
+	self.value = value
 	BroadcastCallback(self.onActionEndedCallbacks, 0)
 end
