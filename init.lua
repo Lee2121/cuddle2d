@@ -6,3 +6,5 @@ require "lib.cuddle2d.input.playerinputmanager"
 
 require "lib.cuddle2d.players.playerinstance"
 require "lib.cuddle2d.players.playermanager"
+
+require "lib.cuddle2d.utils.callbacks"
