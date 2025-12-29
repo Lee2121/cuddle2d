@@ -19,7 +19,7 @@ local InputContext_Test = {
 
 	leftMouseClick = InputAction_Bool( { InputDef_MouseClicked(1), InputDef_KeyboardKey("return") } ),
 
-	leftScreenTouch = InputAction_Vector2( { InputDef_Touch() } )
+	leftScreenTouch = InputAction_Vector2( { InputDef_Touch("left") } )
 }
 ```
 
