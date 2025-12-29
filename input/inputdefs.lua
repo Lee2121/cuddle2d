@@ -201,7 +201,8 @@ function InputDef_MousePosition:onMouseMoved(x, y, dy, dy, isTouch)
 end
 
 InputDef_Touch = InputDef_Base:createDef()
-function InputDef_Touch:new()
+function InputDef_Touch:new(screenSide)
+	self.screenSide = screenSide
 end
 
 function InputDef_Touch:__tostring()
@@ -216,13 +217,32 @@ function InputDef_Touch:activate(playerInputManager)
 end
 
 function InputDef_Touch:onTouchPressed(id, x, y, dx, dy, pressure)
+
+	-- determine if this is the correct side of the screen
+	if self.screenSide == "left" then
+		if x > love.graphics.getWidth() / 2 then
+			return
+		end
+	elseif self.screenSide == "right" then
+		if x < love.graphics.getWidth() / 2 then
+			return
+		end
+	elseif self.screenSide ~= nil then
+		error("unknown screenSide command " .. self.screenSide)
+		return
+	end
+
+	self.id = id
+
 	BroadcastInputTriggered(self, { x, y })
 end
 
 function InputDef_Touch:onTouchMoved(id, x, y, dx, dy, pressure)
+	if self.id ~= id then return end
 	BroadcastInputTriggered(self, { x, y })
 end
 
 function InputDef_Touch:onTouchReleased(id, x, y, dx, dy, pressure)
+	if self.id ~= id then return end
 	BroadcastInputEnded(self, { x, y })
 end
