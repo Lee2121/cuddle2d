@@ -50,7 +50,7 @@ function PlayerManager:connectLocalPlayer(inputDevice)
 
 	local newPlayerInstance = PlayerInstance(inputDevice, "local")
 
-	print("Connecting local player ", table.maxn(self.connectedPlayers), " with device ", inputDevice)
+	print("Connecting local player ", table.maxn(self.connectedPlayers) + 1, " with device ", inputDevice)
 	table.insert(self.connectedPlayers, newPlayerInstance)
 	BroadcastCallback(self.onPlayerConnectedCallbacks, newPlayerInstance)
 end
