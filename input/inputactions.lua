@@ -37,30 +37,30 @@ function InputAction_Base:activateForPlayer(playerInputManager)
 	actionPlayerInstance.rawValue = 0
 	actionPlayerInstance.value = actionPlayerInstance:getDefaultValue()
 
-	actionPlayerInstance.startedInputs = {} -- list of linked inputs that have "started" but not ended
+	actionPlayerInstance.triggeredInputs = {} -- list of linked inputs that have "triggered" but not ended
 
 	for _, inputDefinition in ipairs(self.inputDefinitions) do
   		local inputInstance = inputDefinition:activate_internal(actionPlayerInstance)
 		table.insert(actionPlayerInstance.inputInstances, inputInstance)
 	end
 
-	actionPlayerInstance.onActionStartedCallbacks = {}
+	actionPlayerInstance.onActionTriggeredCallbacks = {}
 	actionPlayerInstance.onActionEndedCallbacks = {}
 
 	return actionPlayerInstance
 end
 
-function InputAction_Base:linkedInputStarted(inputDefInstance, value)
+function InputAction_Base:linkedInputTriggered(inputDefInstance, value)
 
 	self.rawValue = value 
 	self.value = self:calcValueForInput(inputDefInstance, value)
 
-	if #self.startedInputs == 0 then
-		BroadcastCallback(self.onActionStartedCallbacks, value)
+	if #self.triggeredInputs == 0 then
+		BroadcastCallback(self.onActionTriggeredCallbacks, value)
 	end
 
-	local function hasInputBeenStarted(inputDefInstance)
-		for _, inputDef in ipairs(self.startedInputs) do
+	local function isInputTriggered(inputDefInstance)
+		for _, inputDef in ipairs(self.triggeredInputs) do
 			if inputDef == inputDefInstance then
 				return true
 			end
@@ -68,25 +68,25 @@ function InputAction_Base:linkedInputStarted(inputDefInstance, value)
 		return false
 	end
 
-	if not hasInputBeenStarted(inputDefInstance) then
-		table.insert(self.startedInputs, inputDefInstance)
+	if not isInputTriggered(inputDefInstance) then
+		table.insert(self.triggeredInputs, inputDefInstance)
 	end
 end
 
 function InputAction_Base:linkedInputEnded(inputDefInstance, value)
 
-	for i = #self.startedInputs, 1, -1 do
-		if self.startedInputs[i] == inputDefInstance then
-			table.remove(self.startedInputs, i)
+	for i = #self.triggeredInputs, 1, -1 do
+		if self.triggeredInputs[i] == inputDefInstance then
+			table.remove(self.triggeredInputs, i)
 		end
 	end
 
 	-- We may eventually want this value to only update when we have released all inputs. Eg if there are two keyboard keys linked to the same action, and I press both, then release one, what is the expected behavior?
-	-- May want to move this value update to only happen if #self.startedInputs == 0, but in that case, we need to add special handling for the InputAction_Vector2, as we will want to make sure the different actions can be updated independently.
+	-- May want to move this value update to only happen if #self.triggeredInputs == 0, but in that case, we need to add special handling for the InputAction_Vector2, as we will want to make sure the different actions can be updated independently.
 	self.rawValue = value
 	self.value = self:calcValueForInput(inputDefInstance, value)
 
-	if #self.startedInputs == 0 then
+	if #self.triggeredInputs == 0 then
 		BroadcastCallback(self.onActionEndedCallbacks, value)
 	end
 end

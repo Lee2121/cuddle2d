@@ -35,10 +35,10 @@ function InputDef_Base:activate_internal(owningActionInstance)
 
 	playerInputDefInstance.originalDefinition = self
 	
-	playerInputDefInstance.onInputStartedCallbacks = {}
+	playerInputDefInstance.onInputTriggeredCallbacks = {}
 	playerInputDefInstance.onInputEndedCallbacks = {}
 
-	BindToCallback(playerInputDefInstance.onInputStartedCallbacks, owningActionInstance, owningActionInstance.linkedInputStarted)
+	BindToCallback(playerInputDefInstance.onInputTriggeredCallbacks, owningActionInstance, owningActionInstance.linkedInputTriggered)
 	BindToCallback(playerInputDefInstance.onInputEndedCallbacks, owningActionInstance, owningActionInstance.linkedInputEnded)
 
 	playerInputDefInstance.inputManager = owningActionInstance.linkedInputManager
@@ -56,9 +56,9 @@ local function GetModifiedInputValue(inputDef, rawValue)
 	return modifiedValue
 end
 
-local function BroadcastInputStarted(inputDef, rawValue)
+local function BroadcastInputTriggered(inputDef, rawValue)
 	local modifiedValue = GetModifiedInputValue(inputDef, rawValue)
-	BroadcastCallback(inputDef.onInputStartedCallbacks, inputDef, modifiedValue)
+	BroadcastCallback(inputDef.onInputTriggeredCallbacks, inputDef, modifiedValue)
 end
 
 local function BroadcastInputEnded(inputDef, rawValue)
@@ -84,7 +84,7 @@ function InputDef_KeyboardKey:onKeyPressed(key, scancode, isRepeat)
 	if not self.inputManager:isInputDeviceUsedByPlayer("mouseAndKeyboard") then return end
 
 	if key == self.assignedKey then
-		BroadcastInputStarted(self, 1)
+		BroadcastInputTriggered(self, 1)
 	end
 end
 
@@ -113,7 +113,7 @@ function InputDef_GamepadAxis:onGamepadAxis(joystick, axis, value)
 	if not self.inputManager:isInputDeviceUsedByPlayer(joystick) then return end
 
 	if axis == self.axisName then
-		BroadcastInputStarted(self, value)
+		BroadcastInputTriggered(self, value)
 	end
 end
 
@@ -135,7 +135,7 @@ function InputDef_GamepadButton:onGamepadButtonPressed(joystick, button)
 	if not self.inputManager:isInputDeviceUsedByPlayer(joystick) then return end
 	
 	if button == self.buttonID then
-		BroadcastInputStarted(self, 1)
+		BroadcastInputTriggered(self, 1)
 	end
 end
 
@@ -173,7 +173,7 @@ function InputDef_MouseClicked:onMousePressed(x, y, button, isTouch, presses)
 	if not self.inputManager:isInputDeviceUsedByPlayer("mouseAndKeyboard") then return end
 
 	if button == self.buttonID then
-		BroadcastInputStarted(self, 1)
+		BroadcastInputTriggered(self, 1)
 	end
 end
 
@@ -187,6 +187,7 @@ end
 
 InputDef_MousePosition = InputDef_Base:createDef()
 function InputDef_MousePosition:activate(playerInputManager)
+	if not self.inputManager:isInputDeviceUsedByPlayer("mouseAndKeyboard") then return end
 	BindToCallback(InputDeviceManager.onMouseMovedCallbacks, self, self.onMouseMoved)
 end
 
@@ -196,21 +197,32 @@ end
 
 function InputDef_MousePosition:onMouseMoved(x, y, dy, dy, isTouch)
 	if not self.inputManager:isInputDeviceUsedByPlayer("mouseAndKeyboard") then return end
-	BroadcastInputStarted(self, {x, y})
+	BroadcastInputTriggered(self, {x, y})
 end
 
-InputDef_TouchDrag = InputDef_Base:createDef()
-function InputDef_TouchDrag:new()
+InputDef_Touch = InputDef_Base:createDef()
+function InputDef_Touch:new()
 end
 
-function InputDef_TouchDrag:__tostring()
-	return "InputDef_TouchDrag"
+function InputDef_Touch:__tostring()
+	return "InputDef_Touch"
 end
 
-InputDef_TouchJoystick = InputDef_Base:createDef()
-function InputDef_TouchJoystick:new()
+function InputDef_Touch:activate(playerInputManager)
+	if not self.inputManager:isInputDeviceUsedByPlayer("touch") then return end
+	BindToCallback(InputDeviceManager.onTouchPressedCallbacks, self, self.onTouchPressed)
+	BindToCallback(InputDeviceManager.onTouchMovedCallbacks, self, self.onTouchMoved)
+	BindToCallback(InputDeviceManager.onTouchReleasedCallbacks, self, self.onTouchReleased)
 end
 
-function InputDef_TouchJoystick:__tostring()
-	return "InputDef_TouchJoystick"
+function InputDef_Touch:onTouchPressed(id, x, y, dx, dy, pressure)
+	BroadcastInputTriggered(self, { x, y })
+end
+
+function InputDef_Touch:onTouchMoved(id, x, y, dx, dy, pressure)
+	BroadcastInputTriggered(self, { x, y })
+end
+
+function InputDef_Touch:onTouchReleased(id, x, y, dx, dy, pressure)
+	BroadcastInputEnded(self, { x, y })
 end
