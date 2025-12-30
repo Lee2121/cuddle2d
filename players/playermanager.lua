@@ -7,16 +7,20 @@ PlayerManager = {
 
 	onPlayerConnectedCallbacks = {},
 	onPlayerDisconnectedCallbacks = {},
+
+	defaultPlayerConfig = {}
 }
 
-function PlayerManager:init()
+function PlayerManager:init(defaultPlayerConfig)
 	BindToCallback(InputDeviceManager.onInputDeviceConnectedCallbacks, self, self.onInputDeviceConnected)
 	BindToCallback(InputDeviceManager.onInputDeviceDisconnectedCallbacks, self, self.onInputDeviceDisconnected)
+
+	self.defaultPlayerConfig = defaultPlayerConfig
 end
 
 function PlayerManager:onInputDeviceConnected(inputDevice)
 	if not self:isAnyPlayerUsingDevice() then
-		self:connectLocalPlayer(inputDevice)
+		self:connectLocalPlayer(inputDevice, self.defaultPlayerConfig)
 	end
 end
 
@@ -40,7 +44,7 @@ function PlayerManager:isAnyPlayerUsingDevice(inputDevice)
 	return (PlayerManager:getPlayerUsingDevice(inputDevice) ~= nil)
 end
 
-function PlayerManager:connectLocalPlayer(inputDevice)
+function PlayerManager:connectLocalPlayer(inputDevice, playerConfig)
 
 	-- make sure this input device isn't already being used
 	if self:isAnyPlayerUsingDevice(inputDevice) then
@@ -48,7 +52,7 @@ function PlayerManager:connectLocalPlayer(inputDevice)
 		return
 	end
 
-	local newPlayerInstance = PlayerInstance(inputDevice, "local")
+	local newPlayerInstance = PlayerInstance(inputDevice, "local", playerConfig)
 
 	print("Connecting local player ", table.maxn(self.connectedPlayers) + 1, " with device ", inputDevice)
 	table.insert(self.connectedPlayers, newPlayerInstance)

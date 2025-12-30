@@ -111,9 +111,26 @@ end
 
 function InputDef_GamepadAxis:onGamepadAxis(joystick, axis, value)
 	if not self.inputManager:isInputDeviceUsedByPlayer(joystick) then return end
+	if axis ~= self.axisName then return end
+	
+	-- apply the player's deadzone
+	local function applyDeadzone(rawValue)
+		local deadzone = self.inputManager.config.joystickDeadzone
+		local absValue = math.abs(rawValue)
+		if absValue < deadzone then
+			return 0
+		end
+		local mappedAbsValue = (absValue - deadzone) / (1 - deadzone)
+		local sign = rawValue >= 0 and 1 or -1
+		return mappedAbsValue * sign
+	end
 
-	if axis == self.axisName then
+	local deadzonedValue = applyDeadzone(value)
+
+	if math.abs(deadzonedValue) > 0 then
 		BroadcastInputTriggered(self, value)
+	else
+		BroadcastInputEnded(self, value)
 	end
 end
 

@@ -7,9 +7,9 @@ PlayerInputManager = {}
 setmetatable(PlayerInputManager, PlayerInputManager)
 PlayerInputManager.__index = PlayerInputManager
 
-function PlayerInputManager:__call(inputDevice)
+function PlayerInputManager:__call(inputDevice, playerConfig)
 	local newInstance = setmetatable({}, self)
-	newInstance:new(inputDevice)
+	newInstance:new(inputDevice, playerConfig)
 	return newInstance
 end
 
@@ -17,7 +17,7 @@ function PlayerInputManager:__tostring()
 	return "PlayerInputManager"
 end
 
-function PlayerInputManager:new(inputDevice)
+function PlayerInputManager:new(inputDevice, playerConfig)
 	if inputDevice == nil then
 		error("invalid input device!")
 	end
@@ -30,6 +30,8 @@ function PlayerInputManager:new(inputDevice)
 	self.actionStoppedCallbacks = {}
 
 	self.activeInputDevice = inputDevice
+
+	self.config = playerConfig
 end
 
 function PlayerInputManager:isInputDeviceUsedByPlayer(inputDevice)
