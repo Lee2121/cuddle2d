@@ -128,9 +128,9 @@ function InputDef_GamepadAxis:onGamepadAxis(joystick, axis, value)
 	local deadzonedValue = applyDeadzone(value)
 
 	if math.abs(deadzonedValue) > 0 then
-		BroadcastInputTriggered(self, value)
+		BroadcastInputTriggered(self, deadzonedValue)
 	else
-		BroadcastInputEnded(self, value)
+		BroadcastInputEnded(self, deadzonedValue)
 	end
 end
 
