@@ -56,7 +56,7 @@ function InputAction_Base:linkedInputTriggered(inputDefInstance, value)
 	self.value = self:calcValueForInput(inputDefInstance, value)
 
 	if #self.triggeredInputs == 0 then
-		BroadcastCallback(self.onActionTriggeredCallbacks, value)
+		BroadcastCallback(self.onActionTriggeredCallbacks, self.value)
 	end
 
 	local function isInputTriggered(inputDefInstance)
@@ -87,7 +87,7 @@ function InputAction_Base:linkedInputEnded(inputDefInstance, value)
 	self.value = self:calcValueForInput(inputDefInstance, value)
 
 	if #self.triggeredInputs == 0 then
-		BroadcastCallback(self.onActionEndedCallbacks, value)
+		BroadcastCallback(self.onActionEndedCallbacks, self.value)
 	end
 end
 
