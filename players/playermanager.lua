@@ -70,6 +70,15 @@ function PlayerManager:disconnectLocalPlayer(player)
 	end
 end
 
+function PlayerManager:getPlayerIndex(player)
+	for playerIndex, currPlayer in ipairs(self.connectedPlayers) do
+		if currPlayer == player then
+			return playerIndex
+		end
+	end
+	return -1
+end
+
 function PlayerManager:connectRemotePlayer()
 	error("implement ConnectRemotePlayer")
 end
