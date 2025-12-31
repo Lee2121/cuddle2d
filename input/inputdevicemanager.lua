@@ -114,8 +114,12 @@ end
 
 function InputDeviceManager:disconnectDevice(inputDevice)
 	print("Disconnecting input device", inputDevice)
-	self.connectedDevices[inputDevice] = nil
-	BroadcastCallback(self.onInputDeviceDisconnectedCallbacks, inputDevice)
+	for inputIndex, currInputDevice in ipairs(self.connectedDevices) do
+		if currInputDevice == inputDevice then
+				table.remove(self.connectedDevices, inputIndex)
+				BroadcastCallback(self.onInputDeviceDisconnectedCallbacks, inputDevice)
+		end
+	end
 end
 
 return InputDeviceManager
