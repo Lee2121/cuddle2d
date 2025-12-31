@@ -27,7 +27,7 @@ end
 function PlayerManager:onInputDeviceDisconnected(inputDevice)
 	local associatedPlayer = self:getPlayerUsingDevice(inputDevice)
 	if associatedPlayer ~= nil then
-		self:disconnectLocalPlayer()
+		self:disconnectLocalPlayer(associatedPlayer)
 	end
 end
 
