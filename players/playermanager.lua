@@ -54,8 +54,18 @@ function PlayerManager:connectLocalPlayer(inputDevice, playerConfig)
 
 	local newPlayerInstance = PlayerInstance(inputDevice, "local", playerConfig)
 
-	print("Connecting local player ", table.maxn(self.connectedPlayers) + 1, " with device ", inputDevice)
-	table.insert(self.connectedPlayers, newPlayerInstance)
+	local function findFirstUnusedPlayerSlot()
+		for playerIndex, playerInstance in ipairs(self.connectedPlayers) do
+			if playerInstance == nil then
+				return playerIndex
+			end
+		end
+		return #self.connectedPlayers + 1
+	end
+
+	local newPlayerIndex = findFirstUnusedPlayerSlot()
+	print("Connecting local player ", newPlayerIndex, " with device ", inputDevice)
+	table.insert(self.connectedPlayers, newPlayerIndex, newPlayerInstance)
 	BroadcastCallback(self.onPlayerConnectedCallbacks, newPlayerInstance)
 end
 
@@ -63,7 +73,7 @@ function PlayerManager:disconnectLocalPlayer(player)
 	for i, connectedPlayer in ipairs(self.connectedPlayers) do
 		if connectedPlayer == player then
 			print("Disconnecting player ", player)
-			table.remove(self.connectedPlayers, i)
+			self.connectedPlayers[i] = nil -- set the player data to nil so that we can fill the gap back in if a new player joins.
 			BroadcastCallback(self.onPlayerDisconnectedCallbacks, connectedPlayer)
 			break
 		end
