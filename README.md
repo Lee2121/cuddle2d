@@ -3,7 +3,7 @@ Steps to use:
 2. Right-click, and open git bash.
 3. Paste in `git submodule add https://github.com/Lee2121/cuddle2d.git` and hit enter.
 4. Make sure you do not have any of the core love input handling callbacks in your project (`love.keyboardpresssed`, `love.mousepressed`, `love.joystickaxis`, etc). These will all be handled by cuddle2d.
-5. In your main.lua file, add `require "lib.cuddle2d.init`
+5. In your main.lua file, add `require "lib.cuddle2d`
 6. Create a defaultConfig table. eg: `defaultConfig = { joystickDeadzone = # }`
 7. In `function love.load()`, call `PlayerManager:init(defaultConfig)`
 8. Define Input Mapping Contexts. Create a new table. Inside the table, the keys are the name of the input actions. Each input action key should point to a child of `InputAction_Base`. Eg:
